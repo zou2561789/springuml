@@ -1,0 +1,8 @@
+@startuml
+interface EnvironmentPostProcessor{
+void postProcessEnvironment(ConfigurableEnvironment environment,SpringApplication application)
+}
+
+
+
+@enduml

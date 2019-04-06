@@ -1,0 +1,482 @@
+@startuml
+class Binder{
+    -{static} Set<Class<?>> NON_BEAN_CLASSES
+    -{static} List<BeanBinder> BEAN_BINDERS
+    - {final}Iterable<ConfigurationPropertySource> sources
+    -{final} PlaceholdersResolver placeholdersResolver
+    -{final} ConversionService conversionService
+    -{final} Consumer<PropertyEditorRegistry> propertyEditorInitializer
+    +{static}  Binder get(Environment environment)
+    +<T> BindResult<T> bind(String name, Class<T> target)
+    +<T> BindResult<T> bind(String name, Bindable<T> target)
+    +<T> BindResult<T> bind(ConfigurationPropertyName name, Bindable<T> target)
+    +<T> BindResult<T> bind(String name, Bindable<T> target, BindHandler handler)
+    <T> BindResult<T> bind(ConfigurationPropertyName name, Bindable<T> target,BindHandler handler)
+    -<T> T handleBindResult(ConfigurationPropertyName name, Bindable<T> target,BindHandler handler, Context context, Object result) throws Exception
+    -<T> T handleBindError(ConfigurationPropertyName name, Bindable<T> target,BindHandler handler, Context context, Exception error)
+    -<T> Object bindObject(ConfigurationPropertyName name, Bindable<T> target,BindHandler handler, Context context, boolean allowRecursiveBinding)
+    - AggregateBinder<?> getAggregateBinder(Bindable<?> target, Context context)
+    - <T> Object bindAggregate(ConfigurationPropertyName name, Bindable<T> target,BindHandler handler, Context context, AggregateBinder<?> aggregateBinder)
+    - ConfigurationProperty findProperty(ConfigurationPropertyName name,Context context)
+    -  <T> Object bindProperty(Bindable<T> target, Context context,ConfigurationProperty property)
+    - Object bindBean(ConfigurationPropertyName name, Bindable<?> target,BindHandler handler, Context context, boolean allowRecursiveBinding)
+    -  boolean isUnbindableBean(ConfigurationPropertyName name, Bindable<?> target,Context context)
+    -  boolean containsNoDescendantOf(Iterable<ConfigurationPropertySource> sources,ConfigurationPropertyName name)
+}
+class Context{
+  -{final} BindConverter converter
+  - {final}int depth
+  -{final} List<ConfigurationPropertySource> source
+  -int sourcePushCount
+  - final Deque<Class<?>> beans
+  -ConfigurationProperty configurationProperty
+  -void increaseDepth()
+  -  void decreaseDepth()
+  -<T> T withSource(ConfigurationPropertySource source,Supplier<T> supplier)
+  - <T> T withBean(Class<?> bean, Supplier<T> supplier)
+  - boolean hasBoundBean(Class<?> bean)
+  - void setConfigurationProperty(ConfigurationProperty configurationProperty)
+  - void clearConfigurationProperty()
+  + PlaceholdersResolver getPlaceholdersResolver()
+  +  BindConverter getConverter()
+  + Binder getBinder()
+  + int getDepth()
+  + Iterable<ConfigurationPropertySource> getSources()
+  +  ConfigurationProperty getConfigurationProperty()
+}
+class ConfigurationProperty{
+   -{final} ConfigurationPropertyName name
+   -{final} Object value
+   -{final} Origin origin
+   {static} ConfigurationProperty of(ConfigurationPropertyName name,OriginTrackedValue value)
+   {static} ConfigurationProperty of(ConfigurationPropertyName name, Object value,Origin origin)
+   + ConfigurationPropertyName getName()
+   + Object getValue()
+   + Origin getOrigin()
+   +  boolean equals(Object obj)
+   + int hashCode()
+   + String toString()
+   +  int compareTo(ConfigurationProperty other)
+
+}
+
+class Bindable<T>{
+    -{static} final Annotation[] NO_ANNOTATIONS
+    -{final}ResolvableType type
+    -{final} ResolvableType boxedType
+    -{final} Supplier<T> value
+    -{final} Annotation[] annotations
+    +{static} <T> Bindable<T> ofInstance(T instance)
+    +{static} <T> Bindable<T> of(Class<T> type)
+    +{static} <E> Bindable<List<E>> listOf(Class<E> elementType)
+    +{static} <E> Bindable<Set<E>> setOf(Class<E> elementType)
+    +{static}  <K, V> Bindable<Map<K, V>> mapOf(Class<K> keyType, Class<V> valueType)
+    +{static}  <T> Bindable<T> of(ResolvableType type)
+    -{static} ResolvableType box(ResolvableType type)
+    + ResolvableType getType()
+    +  ResolvableType getBoxedType()
+    + Supplier<T> getValue()
+    +  Annotation[] getAnnotations()
+    +  <A extends Annotation> A getAnnotation
+    + boolean equals(Object obj)
+    + hashCode()
+    + Bindable<T> withAnnotations(Annotation... annotations)
+    + Bindable<T> withExistingValue(T existingValue)
+    + withSuppliedValue(Supplier<T> suppliedValue)
+    - boolean nullSafeEquals(Object o1, Object o2)
+
+
+
+}
+class BindResult<T>{
+   +{static}<T> BindResult<T> of(T value)
+   -{static,final}  BindResult<?> UNBOUND
+   -{final} T value
+   + T get() throws NoSuchElementException
+   + boolean isBound()
+   + void ifBound(Consumer<? super T> consumer)
+   + <U> BindResult<U> map(Function<? super T, ? extends U> mapper)
+   +  T orElse(T other)
+   + T orElseGet(Supplier<? extends T> other)
+   + T orElseCreate(Class<? extends T> type)
+   + <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X
+   + boolean equals(Object obj)
+   + int hashCode()
+
+}
+class ConfigurationPropertyName{
+   -{static,final}  String EMPTY_STRING
+   -{static,final}  ConfigurationPropertyName EMPTY
+   - Elements elements;
+   -{final}  CharSequence[] uniformElements;
+   - String string;
+   +{static}  boolean isValid(CharSequence name)
+   +{static}  ConfigurationPropertyName of(CharSequence name)
+   {static} ConfigurationPropertyName of(CharSequence name, boolean returnNullIfInvalid)
+   -{static} List<Character> getInvalidChars(Elements elements, int index)
+   -{static} ConfigurationPropertyName adapt(CharSequence name, char separator)
+   -{static} ConfigurationPropertyName adapt(CharSequence name, char separator,Function<CharSequence, CharSequence> elementValueProcessor)
+   +boolean isEmpty()
+   +boolean isLastElementIndexed()
+   +isIndexed(int elementIndex)
+   + isNumericIndex(int elementIndex)
+   + String getLastElement(Form form)
+   + String getElement(int elementIndex, Form form)
+   + convertToOriginalForm(CharSequence element)
+   + convertToDashedElement(CharSequence element)
+   + convertToUniformElement(CharSequence element)
+   + CharSequence convertElement(CharSequence element, boolean lowercase,ElementCharPredicate filter)
+   + int getNumberOfElements()
+   + ConfigurationPropertyName append(String elementValue)
+   + ConfigurationPropertyName chop(int size)
+   + isParentOf(ConfigurationPropertyName name)
+   + isAncestorOf(ConfigurationPropertyName name)
+   + int compareTo(ConfigurationPropertyName other)
+   + int compare(ConfigurationPropertyName n1, ConfigurationPropertyName n2)
+   + int compare(String e1, ElementType type1, String e2, ElementType type2)
+   + boolean equals(Object obj)
+   + boolean elementEquals(Elements e1, Elements e2, int i)
+   + int hashCode()
+   + String toString()
+   - String buildToString()
+}
+
+enum Form{
+   ORIGINAL
+   DASHED
+   UNIFORM
+}
+class Elements{
+ -{static,final} int[] NO_POSITION
+ -{static,final} ElementType[] NO_TYPE
+ -{static,final} Elements EMPTY
+ -{final} CharSequence source;
+ -{final} int size;
+ -{final} int[] start;
+ -{final} int[] end;
+ -{final} ElementType[] type;
+ -{final} CharSequence[] resolved;
+ + Elements append(Elements additional)
+ +  Elements chop(int size)
+ - CharSequence[] newResolved(int size)
+ + int getSize()
+ + CharSequence get(int index)
+ + int getLength(int index)
+ + char charAt(int index, int charIndex)
+ + ElementType getType(int index)
+ + CharSequence getSource()
+ + boolean canShortcutWithSource(ElementType requiredType)
+ + boolean canShortcutWithSource(ElementType requiredType,ElementType alternativeType
+}
+class ElementsParser{
+   -{static,final}  int DEFAULT_CAPACITY
+   -{final} CharSequence source;
+   -{final} char separator;
+   -{final}  int size;
+   -{final} int[] start;
+   -{final} int[] end;
+   -{final} ElementType[] type;
+   -{final} CharSequence[] resolved;
+   + {static} boolean isValidChar(char ch, int index)
+   + {static} boolean isAlphaNumeric(char ch)
+   - {static} boolean isAlpha(char ch)
+   - {static} boolean isNumeric(char ch)
+   + Elements parse()
+   + Elements parse(Function<CharSequence, CharSequence> valueProcessor)
+   -  ElementType updateType(ElementType existingType, char ch, int index)
+   - add(int start, int end, ElementType type,Function<CharSequence, CharSequence> valueProcessor)
+   - int[] expand(int[] src)
+   - ElementType[] expand(ElementType[] src)
+   - CharSequence[] expand(CharSequence[] src)
+
+
+}
+enum ElementType{
+  		EMPTY(false)
+  		UNIFORM(false)
+  		DASHED(false)
+  		NON_UNIFORM(false)
+  		INDEXED(true)
+        NUMERICALLY_INDEXED(true)
+        + boolean isIndexed()
+}
+ConfigurationPropertyName <..o Form
+ConfigurationPropertyName <--o Elements
+Elements ..>ElementsParser
+Elements ..>ElementType
+ElementsParser ..>ElementType
+
+
+
+class BindConverter{
+   -{static,final} Set<Class<?>> EXCLUDED_EDITORS
+   -{static} BindConverter sharedInstance
+   -{static} ConversionService conversionService
+   {static}BindConverter get(ConversionService conversionService,Consumer<PropertyEditorRegistry> propertyEditorInitializer)   -List<ConversionService> getConversionServices(ConversionService conversionService,Consumer<PropertyEditorRegistry> propertyEditorInitializer)
+   + canConvert(Object value, ResolvableType type,Annotation... annotations)
+   +  T convert(Object result, Bindable<T> target)
+   + <T> T convert(Object value, ResolvableType type, Annotation... annotations)
+
+}
+class ResolvableTypeDescriptor{
+
+}
+class CompositeConversionService{
+  -{final} List<ConversionService> delegates
+  + boolean canConvert(Class<?> sourceType, Class<?> targetType)
+  + boolean canConvert(TypeDescriptor sourceType, TypeDescriptor targetType)
+  +  <T> T convert(Object source, Class<T> targetType)
+  +  convert(Object source, TypeDescriptor sourceType,TypeDescriptor targetType)
+}
+class TypeConverterConversionService{
+  -SimpleTypeConverter createTypeConverter( Consumer<PropertyEditorRegistry> initializer)
+  + boolean canConvert(TypeDescriptor sourceType, TypeDescriptor targetType)
+}
+class TypeConverterConverter{
+    -{final} SimpleTypeConverter typeConverter
+     +Set<ConvertiblePair> getConvertibleTypes()
+     + boolean matches(TypeDescriptor sourceType, TypeDescriptor targetType)
+     Object convert(Object source, TypeDescriptor sourceType,TypeDescriptor targetType)
+     + PropertyEditor getPropertyEditor(Class<?> type)
+}
+
+class TypeDescriptor{
+
+}
+
+class SimpleTypeConverter
+note left: 只是设置类TypeConverterDelegate并将自己作为属性编辑器仓库 其他全部由TypeConverterSupport实现
+class TypeConverterDelegate{
+    -{static} PropertyEditorRegistrySupport propertyEditorRegistry;
+    -{final} PropertyEditorRegistrySupport propertyEditorRegistry
+    -{final} Object targetObject
+    + <T> T convertIfNecessary(@Nullable String propertyName, @Nullable Object oldValue,Object newValue, @Nullable Class<T> requiredType)
+    + <T> T convertIfNecessary(@Nullable String propertyName, @Nullable Object oldValue, @Nullable Object newValue,@Nullable Class<T> requiredType, @Nullable TypeDescriptor typeDescriptor)
+    - Object attemptToConvertStringToEnum(Class<?> requiredType, String trimmedValue, Object currentConvertedValue)
+    - PropertyEditor findDefaultEditor(@Nullable Class<?> requiredType)
+    - Object doConvertValue(@Nullable Object oldValue, @Nullable Object newValue,@Nullable Class<?> requiredType, @Nullable PropertyEditor editor)
+    - Object doConvertTextValue(@Nullable Object oldValue, String newTextValue, PropertyEditor editor)
+    - Object convertToTypedArray(Object input, @Nullable String propertyName, Class<?> componentType)
+    -  Collection<?> convertToTypedCollection(Collection<?> original, @Nullable String propertyName,Class<?> requiredType, @Nullable TypeDescriptor typeDescriptor)
+    Map<?, ?> convertToTypedMap(Map<?, ?> original, @Nullable String propertyName,Class<?> requiredType, @Nullable TypeDescriptor typeDescriptor)
+    String buildIndexedPropertyName(@Nullable String propertyName, int index)
+    String buildKeyedPropertyName(@Nullable String propertyName, Object key)
+    boolean canCreateCopy(Class<?> requiredType)
+}
+abstract class  TypeConverterSupport
+note left:只是实现类TypeConverter接口并且委托给TypeConverterDelegate
+
+class PropertyEditorRegistrySupport{
+    - ConversionService conversionService
+    - boolean defaultEditorsActive
+    - boolean configValueEditorsActive
+    - Map<Class<?>, PropertyEditor> defaultEditors
+    - Map<Class<?>, PropertyEditor> overriddenDefaultEditors
+    - Map<Class<?>, PropertyEditor> customEditors
+    - Map<String, CustomEditorHolder> customEditorsForPath
+    - Map<Class<?>, PropertyEditor> customEditorCache
+    + void setConversionService(@Nullable ConversionService conversionService)
+    + ConversionService getConversionService()
+    + void useConfigValueEditors()
+    + void overrideDefaultEditor(Class<?> requiredType, PropertyEditor propertyEditor)
+    + PropertyEditor getDefaultEditor(Class<?> requiredType)
+    + registerCustomEditor(Class<?> requiredType, PropertyEditor propertyEditor)
+    + void registerCustomEditor(@Nullable Class<?> requiredType, @Nullable String propertyPath, PropertyEditor propertyEditor)
+    + PropertyEditor findCustomEditor(@Nullable Class<?> requiredType, @Nullable String propertyPath)
+    + boolean hasCustomEditorForElement(@Nullable Class<?> elementType, @Nullable String propertyPath)
+      Class<?> guessPropertyTypeFromEditors(String propertyName)
+      copyCustomEditorsTo(PropertyEditorRegistry target, @Nullable String nestedProperty)
+      void registerDefaultEditors()
+      copyDefaultEditorsTo(PropertyEditorRegistrySupport target)
+    - void createDefaultEditors()
+    - PropertyEditor getCustomEditor(String propertyName, @Nullable Class<?> requiredType)
+    - addStrippedPropertyPaths(List<String> strippedPaths, String nestedPath, String propertyPath)
+}
+class CustomEditorHolder{
+    -{final} PropertyEditor propertyEditor
+    -{final}  Class<?> registeredType
+    - PropertyEditor getPropertyEditor()
+    - Class<?> getRegisteredType()
+    - PropertyEditor getPropertyEditor(@Nullable Class<?> requiredType)
+
+}
+interface PropertyEditorRegistry{
+    void registerCustomEditor(Class<?> requiredType, PropertyEditor propertyEditor)
+    void registerCustomEditor(@Nullable Class<?> requiredType, @Nullable String propertyPath, PropertyEditor propertyEditor)
+    PropertyEditor findCustomEditor(@Nullable Class<?> requiredType, @Nullable String propertyPath)
+}
+interface TypeConverter{
+   <T> T convertIfNecessary(@Nullable Object value, @Nullable Class<T> requiredType) throws TypeMismatchException
+   <T> T convertIfNecessary(@Nullable Object value, @Nullable Class<T> requiredType,@Nullable MethodParameter methodParam) throws TypeMismatchException
+   <T> T convertIfNecessary(@Nullable Object value, @Nullable Class<T> requiredType, @Nullable Field field)throws TypeMismatchException
+   <T> T convertIfNecessary(@Nullable Object value, @Nullable Class<T> requiredType,@Nullable TypeDescriptor typeDescriptor) throws TypeMismatchException
+
+}
+CompositeConversionService ..>BindConverter
+CompositeConversionService ..>ResolvableTypeDescriptor
+CompositeConversionService --|>ConversionService
+ResolvableTypeDescriptor --|>TypeDescriptor
+TypeConverterConversionService --|> GenericConversionService
+GenericConversionService ..|> ConversionService
+TypeConverterConversionService ..>TypeConverterConverter
+TypeConverterConverter ..>SimpleTypeConverter
+TypeConverterConverter ..|> ConditionalGenericConverter
+SimpleTypeConverter --|>TypeConverterSupport
+TypeConverterSupport --|> PropertyEditorRegistrySupport
+TypeConverterSupport ..|>TypeConverter
+PropertyEditorRegistrySupport o-->CustomEditorHolder
+CustomEditorHolder ..> PropertyEditor
+
+abstract class AggregateBinder<T>{
+    -{final} Context context
+    + Object bind(ConfigurationPropertyName name, Bindable<?> target,AggregateElementBinder elementBinder)
+    abstract boolean isAllowRecursiveBinding(ConfigurationPropertySource source)
+    abstract bindAggregate(ConfigurationPropertyName name,Bindable<?> target, AggregateElementBinder elementBinder)
+    abstract T merge(Supplier<T> existing, T additional)
+    final Context getContext()
+}
+abstract IndexedElementsBinder<T>{
+    -{static,final} String INDEX_ZERO
+    {final} bindIndexed(ConfigurationPropertyName name, Bindable<?> target,AggregateElementBinder elementBinder, ResolvableType aggregateType,ResolvableType elementType, IndexedCollectionSupplier result)
+    - bindIndexed(ConfigurationPropertySource source,ConfigurationPropertyName root, Bindable<?> target,AggregateElementBinder elementBinder, IndexedCollectionSupplier collection,ResolvableType aggregateType, ResolvableType elementType)
+    - bindValue(Bindable<?> target, Collection<Object> collection,ResolvableType aggregateType, ResolvableType elementType, Object value)
+    - bindIndexed(ConfigurationPropertySource source,ConfigurationPropertyName root, AggregateElementBinder elementBinder,IndexedCollectionSupplier collection, ResolvableType elementType)
+    - MultiValueMap<String, ConfigurationProperty> getKnownIndexedChildren(ConfigurationPropertySource source, ConfigurationPropertyName root)
+    - assertNoUnboundChildren(MultiValueMap<String, ConfigurationProperty> children)
+    - <C> C convert(Object value, ResolvableType type, Annotation... annotations)
+}
+class CollectionBinder{
+ Object bindAggregate(ConfigurationPropertyName name, Bindable<?> target,AggregateElementBinder elementBinder)
+ Collection<Object> merge(Supplier<Collection<Object>> existing,Collection<Object> additional)
+ - Collection<Object> getExistingIfPossible(Supplier<Collection<Object>> existing)
+ - Collection<Object> copyIfPossible(Collection<Object> collection)
+ - Collection<Object> createNewCollection(Collection<Object> collection)
+}
+class ArrayBinder{
+  bindAggregate(ConfigurationPropertyName name, Bindable<?> target,AggregateElementBinder elementBinder)
+  Object merge(Supplier<Object> existing, Object additional)
+}
+
+interface AggregateElementBinder{
+    Object bind(ConfigurationPropertyName name, Bindable<?> target)
+    bind(ConfigurationPropertyName name, Bindable<?> target,ConfigurationPropertySource source)
+}
+
+interface BindContext{
+Binder getBinder()
+int getDepth()
+Iterable<ConfigurationPropertySource> getSources()
+ConfigurationProperty getConfigurationProperty()
+}
+class JavaBeanBinder{
+    <T> T bind(ConfigurationPropertyName name, Bindable<T> target, Context context,BeanPropertyBinder propertyBinder)
+    boolean hasKnownBindableProperties(ConfigurationPropertyName name,Context context)
+    bind(BeanPropertyBinder propertyBinder, Bean<T> bean,BeanSupplier<T> beanSupplier)
+    <T> boolean bind(BeanSupplier<T> beanSupplier,BeanPropertyBinder propertyBinder, BeanProperty property)
+}
+class Bean<T>{
+    -{static} Bean<?> cached
+    -{final} Class<?> type
+    -{final} ResolvableType resolvableType
+    -{final} Map<String, BeanProperty> properties
+    + {static} <T> Bean<T> get(Bindable<T> bindable, boolean canCallGetValue)
+    - {static} static boolean isInstantiable(Class<?> type)
+    + Class<?> getType()
+    + Map<String, BeanProperty> getProperties()
+    + BeanSupplier<T> getSupplier(Bindable<T> target)
+    - void putProperties(Class<?> type)
+    - boolean isCandidate(Method method)
+    - void addMethod(Method method)
+    - void addMethodIfPossible(Method method, String prefix, int parameterCount,BiConsumer<BeanProperty, Method> consumer)
+    - BeanProperty getBeanProperty(String name)
+    - void addField(Field field)
+}
+class BeanProperty{
+ - {final} String name
+ - {final} ResolvableType declaringClassType
+ - {final} Method getter
+ - {final} Method setter
+ - {final} Field field
+ + void addGetter(Method getter)
+ + void addSetter(Method setter)
+ + void addField(Field field)
+ + String getName()
+ + ResolvableType getType()
+ + Annotation[] getAnnotations()
+ + Supplier<Object> getValue(Supplier<?> instance)
+ + isSettable()
+}
+interface BeanBinder{
+    <T> T bind(ConfigurationPropertyName name, Bindable<T> target, Context context,BeanPropertyBinder propertyBinder)
+}
+interface BeanPropertyBinder{
+    Object bindProperty(String propertyName, Bindable<?> target);
+}
+
+interface PropertyEditorRegistry{
+	void registerCustomEditor(Class<?> requiredType, PropertyEditor propertyEditor)
+	void registerCustomEditor(@Nullable Class<?> requiredType, @Nullable String propertyPath, PropertyEditor propertyEditor)
+	PropertyEditor findCustomEditor(@Nullable Class<?> requiredType, @Nullable String propertyPath)
+}
+
+interface ConfigurationPropertySource{
+    ConfigurationProperty getConfigurationProperty(ConfigurationPropertyName name)
+    ConfigurationPropertyState containsDescendantOf(ConfigurationPropertyName name)
+    ConfigurationPropertySource filter(Predicate<ConfigurationPropertyName> filter)
+    ConfigurationPropertySource withAliases(ConfigurationPropertyNameAliases aliases)
+     Object getUnderlyingSource()
+}
+class PropertySourcesPlaceholdersResolver{
+   - {final}Iterable<PropertySource<?>> sources
+   - {final} PropertyPlaceholderHelper helper
+   - {static} PropertySources getSources(Environment environment)
+   + Object resolvePlaceholders(Object value)
+     String resolvePlaceholder(String placeholder)
+
+}
+class PropertyPlaceholderHelper{
+  -{static} Map<String, String> wellKnownSimplePrefixes
+  -{final} String placeholderPrefix
+  -{final} String placeholderSuffix
+  -{final}  String simplePrefix
+  -{final} String valueSeparator
+  + String replacePlaceholders(String value, final Properties properties)
+  + String replacePlaceholders(String value, PlaceholderResolver placeholderResolver)
+  + String parseStringValue(String value, PlaceholderResolver placeholderResolver, Set<String> visitedPlaceholders)
+  - int findPlaceholderEndIndex(CharSequence buf, int startIndex)
+}
+interface PlaceholdersResolver{
+   Object resolvePlaceholders(Object value);
+
+}
+interface BindHandler{
+}
+interface OriginProvider{
+}
+interface Comparable{
+}
+CollectionBinder --|>IndexedElementsBinder
+ArrayBinder --|>IndexedElementsBinder
+IndexedElementsBinder --|>AggregateBinder
+AggregateBinder -->AggregateElementBinder
+PropertySourcesPlaceholdersResolver -->PropertyPlaceholderHelper
+PropertySourcesPlaceholdersResolver ..|>PlaceholdersResolver
+BeanBinder o..>Binder
+JavaBeanBinder ..|>Binder
+JavaBeanBinder -->Bean
+JavaBeanBinder -->BeanProperty
+BeanProperty o-->Bean
+BeanPropertyBinder o-->BeanBinder
+ConfigurationPropertySource <..Binder
+PlaceholdersResolver<.. Binder
+ConfigurationPropertyName<.. Binder
+PropertyEditorRegistry<.. Binder
+Bindable o-->Binder
+BindResult o-->Binder
+BindHandler o-->Binder
+Context ..|>BindContext
+ConfigurationProperty ..|>OriginProvider
+ConfigurationProperty ..|>Comparable
+Context <--Binder
+ConfigurationProperty <-- ConfigurationPropertyName
+@enduml

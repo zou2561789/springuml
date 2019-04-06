@@ -1,0 +1,282 @@
+@startuml
+
+class TypeDescriptor{
+  -{static,final} Annotation[] EMPTY_ANNOTATION_ARRAY
+  -{static,final} Map<Class<?>, TypeDescriptor> commonTypesCache
+  -{final} Class<?> type;
+  -{final} ResolvableType resolvableType;
+  -{final} AnnotatedElementAdapter annotatedElement;
+  +{static}  TypeDescriptor forObject(@Nullable Object source)
+  +{static}   TypeDescriptor valueOf(@Nullable Class<?> type)
+  +{static}  TypeDescriptor collection(Class<?> collectionType, @Nullable TypeDescriptor elementTypeDescriptor)
+  +{static} TypeDescriptor map(Class<?> mapType, @Nullable TypeDescriptor keyTypeDescriptor,@Nullable TypeDescriptor valueTypeDescriptor)
+  +{static} TypeDescriptor array(@Nullable TypeDescriptor elementTypeDescriptor)
+  +{static} TypeDescriptor nested(MethodParameter methodParameter, int nestingLevel)
+  +{static}TypeDescriptor nested(Field field, int nestingLevel)
+  +{static}TypeDescriptor nested(Property property, int nestingLevel)
+  -{static}TypeDescriptor nested(TypeDescriptor typeDescriptor, int nestingLevel)
+  -{static}TypeDescriptor getRelatedIfResolvable(TypeDescriptor source, ResolvableType type)
+  +Class<?> getObjectType()
+  +  ResolvableType getResolvableType()
+  + Object getSource()
+  + TypeDescriptor narrow(@Nullable Object value)
+  + TypeDescriptor upcast(@Nullable Class<?> superType)
+  +  String getName()
+  + boolean isPrimitive()
+  + Annotation[] getAnnotations()
+  +  boolean hasAnnotation(Class<? extends Annotation> annotationType)
+  + <T extends Annotation> T getAnnotation(Class<T> annotationType)
+  + boolean isAssignableTo(TypeDescriptor typeDescriptor)
+  + boolean isCollection()
+  + boolean isArray()
+  + TypeDescriptor getElementTypeDescriptor()
+  +  TypeDescriptor elementTypeDescriptor(Object element)
+  + boolean isMap()
+  + TypeDescriptor getMapKeyTypeDescriptor()
+  + TypeDescriptor getMapKeyTypeDescriptor(Object mapKey)
+  + TypeDescriptor getMapValueTypeDescriptor()
+  + TypeDescriptor getMapValueTypeDescriptor(Object mapValue)
+  + boolean equals(Object other)
+  + String toString()
+  +  int hashCode()
+  -  boolean annotationsMatch(TypeDescriptor otherDesc)
+  -  boolean annotationEquals(Annotation ann, Annotation otherAnn)
+  -  TypeDescriptor narrow(@Nullable Object value, @Nullable TypeDescriptor typeDescriptor)
+  - boolean isNestedAssignable(@Nullable TypeDescriptor nestedTypeDescriptor,@Nullable TypeDescriptor otherNestedTypeDescriptor)
+
+
+}
+TypeDescriptor ..>ResolvableType
+
+class ResolvableType{
+  +{static,final} ResolvableType NONE
+  -{static,final}  ResolvableType[] EMPTY_TYPES_ARRAY
+  -{static,final} ConcurrentReferenceHashMap<ResolvableType, ResolvableType> cache;
+  -{final}  Type type:java的底层类型
+  -{final} TypeProvider typeProvider
+  -{final}  VariableResolver variableResolver
+  -{final} ResolvableType componentType
+  -{final} Integer hash
+  -{volatile}  superType
+  -{volatile} ResolvableType[] interfaces
+  -{volatile}  ResolvableType[] generics
+  +{static} ResolvableType forClass(@Nullable Class<?> clazz)
+  +{static}  ResolvableType forRawClass(@Nullable Class<?> clazz)
+  +{static}  ResolvableType forClass(Class<?> baseType, Class<?> implementationClass)
+  +{static} ResolvableType forClassWithGenerics(Class<?> clazz, Class<?>... generics)
+  +{static} ResolvableType forClassWithGenerics(Class<?> clazz, ResolvableType... generics)
+  +{static} ResolvableType forInstance(Object instance)
+  +{static}  ResolvableType forField(Field field)
+  +{static}  ResolvableType forField(Field field, Class<?> implementationClass)
+  +{static} ResolvableType forField(Field field, @Nullable ResolvableType implementationType)
+  +{static}  ResolvableType forField(Field field, int nestingLevel)
+  +{static} ResolvableType forField(Field field, int nestingLevel, @Nullable Class<?> implementationClass)
+  +{static}  ResolvableType forConstructorParameter(Constructor<?> constructor, int parameterIndex)
+  +{static}  ResolvableType forConstructorParameter(Constructor<?> constructor, int parameterIndex,Class<?> implementationClass)
+  +{static} ResolvableType forMethodReturnType(Method method)
+  +{static} ResolvableType forMethodReturnType(Method method, Class<?> implementationClass)
+  +{static} ResolvableType forMethodParameter(Method method, int parameterIndex)
+  +{static}  ResolvableType forMethodParameter(Method method, int parameterIndex, Class<?> implementationClass)
+  +{static} ResolvableType forMethodParameter(MethodParameter methodParameter)
+  +{static} ResolvableType forMethodParameter(MethodParameter methodParameter,@Nullable ResolvableType implementationType)
+  +{static} ResolvableType forMethodParameter(MethodParameter methodParameter, @Nullable Type targetType)
+  +{static} void resolveMethodParameter(MethodParameter methodParameter)
+  +{static}  ResolvableType forArrayComponent(ResolvableType componentType)
+  +{static} ResolvableType forType(@Nullable Type type)
+  +{static} ResolvableType forType(@Nullable Type type, @Nullable ResolvableType owner)
+  +{static} ResolvableType forType(ParameterizedTypeReference<?> typeReference)
+   ResolvableType forType(@Nullable Type type, @Nullable VariableResolver variableResolver)
+   ResolvableType forType(@Nullable Type type, @Nullable TypeProvider typeProvider, @Nullable VariableResolver variableResolver)
+  +void clearCache()
+  + Type getType()
+  +  Class<?> getRawClass()
+  + Object getSource()
+  +  Class<?> toClass()
+  + boolean isInstance(@Nullable Object obj)
+  + boolean isAssignableFrom(Class<?> other)
+  + boolean isAssignableFrom(ResolvableType other)
+  +  isAssignableFrom(ResolvableType other, @Nullable Map<Type, Type> matchedBefore)
+  + isArray()
+  +  getComponentType()
+  +  ResolvableType asCollection()
+  + ResolvableType asMap()
+  + ResolvableType as(Class<?> type)
+  + ResolvableType getSuperType()
+  + ResolvableType[] getInterfaces()
+  + boolean hasGenerics()
+  + isEntirelyUnresolvable()
+  + boolean isWildcardWithoutBounds()
+  +  ResolvableType getNested(int nestingLevel, @Nullable Map<Integer, Integer> typeIndexesPerLevel)
+  + ResolvableType getGeneric(@Nullable int... indexes)
+  + ResolvableType[] getGenerics()
+  + Class<?>[] resolveGenerics()
+  + resolveGenerics(Class<?> fallback)
+  + Class<?> resolveGeneric(int... indexes)
+  + Class<?> resolve()
+  + Class<?> resolve(Class<?> fallback)
+  + Class<?> resolveClass()
+  + resolveType()
+  + resolveBounds(Type[] bounds)
+  + ResolvableType resolveVariable(TypeVariable<?> variable)
+  + boolean equals(Object other)
+  + int hashCode()
+  + boolean hasUnresolvableGenerics()
+  + String toString()
+  VariableResolver asVariableResolver()
+  -Object readResolve()
+  - boolean isUnresolvableTypeVariable()
+}
+
+class DefaultVariableResolver{
+ResolvableType resolveVariable(TypeVariable<?> variable);
+Object getSource()
+}
+class TypeVariablesVariableResolver{
+  -{final} TypeVariable<?>[] variables;
+  -{final} ResolvableType[] generics;
+  ResolvableType resolveVariable(TypeVariable<?> variable)
+  Object getSource()
+}
+class SyntheticParameterizedType{
+  -{final} Type rawType;
+  -{final}  Type[] typeArguments;
+  + String getTypeName()
+  + Type getOwnerType()
+  + Type getRawType()
+  + Type[] getActualTypeArguments()
+  + boolean equals(Object other)
+  +  int hashCode()
+  +  String toString()
+}
+class WildcardBounds{
+  -{final} Kind kind;
+  -{final} ResolvableType[] bounds
+  +{static}  WildcardBounds get(ResolvableType type)
+  + boolean isSameKind(WildcardBounds bounds)
+  + boolean isAssignableFrom(ResolvableType... types)
+  + boolean isAssignable(ResolvableType source, ResolvableType from)
+  + ResolvableType[] getBounds()
+}
+class MethodParameter{
+  -{static,final}Annotation[] EMPTY_ANNOTATION_ARRAY = new Annotation[0]
+  -{final}  Executable executable
+  -{final}  int parameterIndex
+  - Parameter parameter
+  - nestingLevel
+  - Class<?> parameterType
+  - Class<?> containingClass
+  - Type genericParameterType
+  - Annotation[] parameterAnnotations
+  - ParameterNameDiscoverer parameterNameDiscoverer
+  - String parameterName
+  -  MethodParameter nestedMethodParameter
+  + {static} MethodParameter forMethodOrConstructor(Object methodOrConstructor, int parameterIndex)
+  + {static} MethodParameter forExecutable(Executable executable, int parameterIndex)
+  + {static} MethodParameter forParameter(Parameter parameter)
+  + {static} int findParameterIndex(Parameter parameter)
+  + {static} int validateIndex(Executable executable, int parameterIndex)
+  + Method getMethod()
+  + Constructor<?> getConstructor()
+  +  Class<?> getDeclaringClass()
+  + Member getMember()
+  + Parameter getParameter()
+  + int getParameterIndex()
+  + increaseNestingLevel()
+  + decreaseNestingLevel()
+  + getNestingLevel()
+  + setTypeIndexForCurrentLevel(int typeIndex)
+  + Integer getTypeIndexForCurrentLevel()
+  + Integer getTypeIndexForLevel(int nestingLevel)
+  + MethodParameter nested()
+  + boolean isOptional()
+  + Class<?> getParameterType()
+  + MethodParameter nestedIfOptional()
+  + Type getGenericParameterType()
+  + Class<?> getNestedParameterType()
+  + Type getNestedGenericParameterType()
+  + Annotation[] getMethodAnnotations()
+  + MethodParameter nestedIfOptional()
+  + setContainingClass(Class<?> containingClass)
+  + Class<?> getParameterType()
+  + Type getGenericParameterType()
+  + Class<?> getNestedParameterType()
+  + Type getNestedGenericParameterType()
+  + Annotation[] getMethodAnnotations()
+  +  <A extends Annotation> A getMethodAnnotation(Class<A> annotationType)
+  + <A extends Annotation> boolean hasMethodAnnotation(Class<A> annotationType)
+  + Annotation[] getParameterAnnotations()
+  +  boolean hasParameterAnnotations()
+  + <A extends Annotation> A getParameterAnnotation(Class<A> annotationType)
+  + <A extends Annotation> boolean hasParameterAnnotation(Class<A> annotationType)
+  + void initParameterNameDiscovery(@Nullable ParameterNameDiscoverer parameterNameDiscoverer)
+  +  String getParameterName()
+  + <A extends Annotation> A adaptAnnotation(A annotation)
+  + Annotation[] adaptAnnotationArray(Annotation[] annotations)
+  + boolean equals(Object other)
+  + int hashCode()
+  + String toString()
+  + MethodParameter clone()
+
+    setContainingClass(Class<?> containingClass)
+    setParameterType(@Nullable Class<?> parameterType)
+  - Map<Integer, Integer> getTypeIndexesPerLevel()
+  - boolean hasNullableAnnotation()
+
+
+
+}
+class Property{
+    -{static}  Map<Property, Annotation[]> annotationCache
+    -{final} Class<?> objectType
+    -{final} Method readMethod
+    -{final} Method writeMethod
+    -{final}  String name
+    -{final} MethodParameter methodParameter
+    - Annotation[] annotations
+    + Class<?> getObjectType()
+    + String getName()
+    + Class<?> getType()
+    + Method getReadMethod()
+    + Method getWriteMethod()
+    + boolean equals(Object other)
+    + int hashCode()
+      MethodParameter getMethodParameter()
+      Annotation[] getAnnotations()
+    - String resolveName()
+    - MethodParameter resolveMethodParameter()
+    - MethodParameter resolveReadMethodParameter()
+    - MethodParameter resolveWriteMethodParameter()
+    - Annotation[] resolveAnnotations()
+    - void addAnnotationsToMap(Map<Class<? extends Annotation>, Annotation> annotationMap, @Nullable AnnotatedElement object)
+    - Field getField()
+    - Class<?> declaringClass()
+
+}
+class AnnotatedElementUtils{
+}
+class AnnotatedElementAdapter{
+  -{final} Annotation[] annotations;
+  + boolean isAnnotationPresent(Class<? extends Annotation> annotationClass)
+  +  <T extends Annotation> T getAnnotation(Class<T> annotationClass)
+  + Annotation[] getAnnotations()
+  + Annotation[] getDeclaredAnnotations()
+  +  boolean isEmpty()
+  + boolean equals(Object other)
+  + int hashCode()
+  + String toString()
+}
+interface AnnotatedElement;
+interface Annotation;
+interface VariableResolver
+interface ParameterizedType
+AnnotatedElementAdapter ..|>AnnotatedElement
+AnnotatedElementAdapter -->Annotation
+ResolvableType <-->MethodParameter
+ResolvableType <-->Property
+ResolvableType -->Filed
+ResolvableType ..>VariableResolver
+DefaultVariableResolver ..|>VariableResolver
+TypeVariablesVariableResolver ..|>VariableResolver
+DefaultVariableResolver o..>ResolvableType
+SyntheticParameterizedType ..>ParameterizedType
+@enduml

@@ -1,0 +1,358 @@
+@startuml
+abstract class PropertySource<T>{
+ Log logger :日志
+ String name:属性名
+ T source:底层资源
+ + String getName():属性资源的定义
+ + T getSource():原始属性
+ + Boolean containsProperty(String name):是否包含给的的属性
+ + {abstract} Object getProperty(String name):获取属性资源
+ + Boolean equals(Object other)
+ + int hashCode()
+ + String toString()
+ + {static} PropertySource named(String name):返回一个可以比较的PropertySource
+}
+class StubPropertySource{
+ String getProperty(String name);
+}
+class ComparisonPropertySource{
+  - {static} String USAGE_ERROR
+  + Object getSource()
+  + Boolean containsProperty(String name)
+  + String getProperty(String name)
+}
+PropertySource <|-- StubPropertySource
+StubPropertySource <|-- ComparisonPropertySource
+
+interface Iterable<T>{
+   Iterator<T> iterator();
+   void forEach(Consumer<? super T> action)
+   Spliterator<T> spliterator()
+}
+interface PropertySources{
+ Stream<PropertySource<?>> stream()
+ boolean contains(String name);
+ PropertySource<?> get(String name);
+}
+class MutablePropertySources{
+  - List<PropertySource<?>> propertySourceList
+  + Iterator<PropertySource<?>> iterator()
+  + Spliterator<PropertySource<?>> spliterator()
+  + Stream<PropertySource<?>> stream()
+  + boolean contains(String name)
+  + PropertySource<?> get(String name)
+  + void addFirst(PropertySource<?> propertySource)
+  + void addLast(PropertySource<?> propertySource)
+  + void addBefore(String relativePropertySourceName, PropertySource<?> propertySource)
+  + void addAfter(String relativePropertySourceName, PropertySource<?> propertySource)
+  + int precedenceOf(PropertySource<?> propertySource)
+  + PropertySource<?> remove(String name)
+  + replace(String name, PropertySource<?> propertySource)
+  +  int size()
+  + String toString()
+  assertLegalRelativeAddition(String relativePropertySourceName, PropertySource<?> propertySource)
+  removeIfPresent(PropertySource<?> propertySource)
+  -addAtIndex(int index, PropertySource<?> propertySource)
+  -assertPresentAndGetIndex(String name)
+}
+Iterable <|-- PropertySources
+PropertySources <|-- MutablePropertySources
+PropertySources *-- PropertySource
+note left:PropertySources 是作为PropertySource的一个集合操作存在的
+
+
+interface PropertyResolver{
+ 	boolean containsProperty(String key)
+ 	String getProperty(String key);
+ 	String getProperty(String key, String defaultValue);
+ 	<T> T getProperty(String key, Class<T> targetType);
+ 	<T> T getProperty(String key, Class<T> targetType, T defaultValue)
+ 	String getRequiredProperty(String key) throws IllegalStateException;
+ 	<T> T getRequiredProperty(String key, Class<T> targetType) throws IllegalStateException;
+ 	String resolvePlaceholders(String text);
+ 	String resolveRequiredPlaceholders(String text) throws IllegalArgumentException;
+}
+interface ConfigurablePropertyResolver{
+  	ConfigurableConversionService getConversionService();
+  	void setConversionService(ConfigurableConversionService conversionService);
+  	void setPlaceholderPrefix(String placeholderPrefix);
+  	void setPlaceholderSuffix(String placeholderSuffix);
+  	void setValueSeparator(@Nullable String valueSeparator);
+  	void setIgnoreUnresolvableNestedPlaceholders(boolean ignoreUnresolvableNestedPlaceholders);
+  	void setRequiredProperties(String... requiredProperties);
+  	void validateRequiredProperties() throws MissingRequiredPropertiesException;
+}
+abstract AbstractPropertyResolver{
+  - ConfigurableConversionService conversionService
+  - PropertyPlaceholderHelper nonStrictHelper
+  - PropertyPlaceholderHelper strictHelper
+  - boolean ignoreUnresolvableNestedPlaceholders
+  - String placeholderPrefix
+  - String placeholderSuffix
+  - String valueSeparator
+  - Set<String> requiredProperties
+  + ConfigurableConversionService getConversionService()
+  + void setConversionService(ConfigurableConversionService conversionService)
+  + void setPlaceholderPrefix(String placeholderPrefix)
+  + void setPlaceholderSuffix(String placeholderSuffix)
+  + void setValueSeparator(@Nullable String valueSeparator)
+  + void setIgnoreUnresolvableNestedPlaceholders(boolean ignoreUnresolvableNestedPlaceholders)
+  + void setRequiredProperties(String... requiredProperties)
+  + void void validateRequiredProperties()
+  + boolean containsProperty(String key)
+  + String getProperty(String key)
+  + String getProperty(String key, String defaultValue)
+  +  <T> T getProperty(String key, Class<T> targetType, T defaultValue)
+  + String getRequiredProperty(String key) throws IllegalStateException
+  +  <T> T getRequiredProperty(String key, Class<T> valueType) throws IllegalStateException
+  +  String resolvePlaceholders(String text)
+  +  String resolveRequiredPlaceholders(String text) throws IllegalArgumentException
+   String resolveNestedPlaceholders(String value)
+   convertValueIfNecessary(Object value, @Nullable Class<T> targetType)
+   {abstract} String getPropertyAsRawString(String key)
+  - PropertyPlaceholderHelper createPlaceholderHelper(boolean ignoreUnresolvablePlaceholders)
+  - String doResolvePlaceholders(String text, PropertyPlaceholderHelper helper)
+
+}
+AbstractPropertyResolver --* ConfigurableConversionService
+ConfigurablePropertyResolver --|>PropertyResolver
+
+
+
+interface ConversionService{
+boolean canConvert(@Nullable Class<?> sourceType, Class<?> targetType);
+boolean canConvert(@Nullable TypeDescriptor sourceType, TypeDescriptor targetType);
+<T> T convert(@Nullable Object source, Class<T> targetType);
+Object convert(@Nullable Object source, @Nullable TypeDescriptor sourceType, TypeDescriptor targetType);
+}
+interface ConverterRegistry{
+void addConverter(Converter<?, ?> converter);
+<S, T> void addConverter(Class<S> sourceType, Class<T> targetType, Converter<? super S, ? extends T> converter);
+void addConverter(GenericConverter converter);
+void addConverterFactory(ConverterFactory<?, ?> factory);
+void removeConvertible(Class<?> sourceType, Class<?> targetType);
+}
+class GenericConversionService{
+  - {static}GenericConverter NO_OP_CONVERTER
+  - {static} GenericConverter NO_MATCH
+  - Converters converters
+  - Map<ConverterCacheKey, GenericConverter> converterCache
+  + void addConverter(Converter<?, ?> converter)
+  + void addConverter(Class<S> sourceType, Class<T> targetType, Converter<? super S, ? extends T> converter)
+  + void addConverter(GenericConverter converter)
+  + void removeConvertible(Class<?> sourceType, Class<?> targetType)
+  + boolean canConvert(@Nullable Class<?> sourceType, Class<?> targetType)
+  + boolean canConvert(@Nullable TypeDescriptor sourceType, TypeDescriptor targetType)
+  + boolean canBypassConvert(@Nullable TypeDescriptor sourceType, TypeDescriptor targetType)
+  + <T> T convert(@Nullable Object source, Class<T> targetType)
+  +  Object convert(@Nullable Object source, @Nullable TypeDescriptor sourceType, TypeDescriptor targetType)
+  +  convert(@Nullable Object source, TypeDescriptor targetType)
+  convertNullSource(@Nullable TypeDescriptor sourceType, TypeDescriptor targetType)
+  getConverter(TypeDescriptor sourceType, TypeDescriptor targetType)
+  getDefaultConverter(TypeDescriptor sourceType, TypeDescriptor targetType)
+  - getRequiredTypeInfo(Class<?> converterClass, Class<?> genericIfc)
+  - invalidateCache()
+  - handleConverterNotFound(@Nullable Object source, @Nullable TypeDescriptor sourceType, TypeDescriptor targetType)
+  — Object handleResult(@Nullable TypeDescriptor sourceType, TypeDescriptor targetType, @Nullable Object result)
+  - void assertNotPrimitiveTargetType(@Nullable TypeDescriptor sourceType, TypeDescriptor targetType)
+}
+class ConverterCacheKey{
+  -{final} TypeDescriptor sourceType
+  -{final} TypeDescriptor targetType
+  + boolean equals(Object other)
+  + int hashCode()
+  + String toString()
+  + int compareTo(ConverterCacheKey other)
+}
+class Converters{
+  - {final}Set<GenericConverter> globalConverters
+  - {final}Map<ConvertiblePair, ConvertersForPair> converters
+  + add(GenericConverter converter
+  + void remove(Class<?> sourceType, Class<?> targetType)
+  + GenericConverter find(TypeDescriptor sourceType, TypeDescriptor targetType)
+  - ConvertersForPair getMatchableConverters(ConvertiblePair convertiblePair)
+  - GenericConverter getRegisteredConverter(TypeDescriptor sourceType,TypeDescriptor targetType, ConvertiblePair convertiblePair)
+  - List<Class<?>> getClassHierarchy(Class<?> type)
+  -addInterfacesToClassHierarchy(Class<?> type, boolean asArray,List<Class<?>> hierarchy, Set<Class<?>> visited)
+  - addToClassHierarchy(int index, Class<?> type, boolean asArray,List<Class<?>> hierarchy, Set<Class<?>> visited)
+  + String toString()
+  - List<String> getConverterStrings()
+}
+class ConvertersForPair{
+ -{final} LinkedList<GenericConverter> converters = new LinkedList<>();
+ +  void add(GenericConverter converter)
+ + GenericConverter getConverter(TypeDescriptor sourceType, TypeDescriptor targetType)
+ + String toString()
+}
+
+class ConverterAdapter{
+  - Converter<Object, Object> converter
+  - ConvertiblePair typeInfo
+  - ResolvableType targetTyp
+  +  Set<ConvertiblePair> getConvertibleTypes()
+  + boolean matches(TypeDescriptor sourceType, TypeDescriptor targetType)
+  + Object convert(@Nullable Object source, TypeDescriptor sourceType, TypeDescriptor targetType)
+}
+class ConverterFactoryAdapter{
+  -{final} ConverterFactory<Object, Object> converterFactory
+  -{final} ConvertiblePair typeInfo
+  +Set<ConvertiblePair> getConvertibleTypes()
+  +matches(TypeDescriptor sourceType, TypeDescriptor targetType)
+  + convert(@Nullable Object source, TypeDescriptor sourceType, TypeDescriptor targetType)
+  +  String toString()
+}
+
+
+interface ConditionalGenericConverter
+
+interface Converter<S,T>{
+Set<ConvertiblePair> getConvertibleTypes();
+Object convert(@Nullable Object source, TypeDescriptor sourceType, TypeDescriptor targetType);
+
+}
+class ConvertiblePair{
+  -{final}Class<?> sourceType
+  -{final}Class<?> targetType
+  + Class<?> getSourceType()
+  + Class<?> getTargetType()
+  + boolean equals(@Nullable Object other)
+  + int hashCode()
+  + String toString()
+}
+interface ConditionalConverter{
+boolean matches(TypeDescriptor sourceType, TypeDescriptor targetType)
+}
+Converters <..o ConvertersForPair
+Converters <..o Converter
+ConverterFactoryAdapter ..|>ConditionalGenericConverter
+ConverterAdapter ..|> ConditionalGenericConverter
+ConditionalGenericConverter --|>Converter
+ConditionalGenericConverter --|> ConditionalConverter
+ConverterAdapter <..o ResolvableType
+ConverterAdapter <..o ConvertiblePair
+ConverterAdapter <..o Converter
+GenericConversionService ..>ConverterCacheKey
+GenericConversionService ..> ConverterAdapter
+GenericConversionService ..>Converters
+GenericConversionService ..|>ConfigurableConversionService
+ConfigurableConversionService ..|> ConversionService
+ConfigurableConversionService ..|> ConverterRegistry
+
+class ResolvableType{
+}
+class SpringConfigurationPropertySource{
+   -{static,final} ConfigurationPropertyName RANDOM
+   -{final}  PropertySource<?> propertySource
+   -{final} PropertyMapper mapper
+   -{final} Function<ConfigurationPropertyName, ConfigurationPropertyState> containsDescendantOf
+   +{static} SpringConfigurationPropertySource from(PropertySource<?> source)
+   -{static} PropertyMapper getPropertyMapper(PropertySource<?> source)
+   -{static} boolean hasSystemEnvironmentName(PropertySource<?> source)
+   -{static} isFullEnumerable(PropertySource<?> source)
+   -{static} PropertySource<?> getRootSource(PropertySource<?> source)
+   -{static}  Function<ConfigurationPropertyName, ConfigurationPropertyState> getContainsDescendantOfForSource(PropertySource<?> source)
+   -{static} ConfigurationPropertyState containsDescendantOfForRandom(ConfigurationPropertyName name)
+   + ConfigurationProperty getConfigurationProperty(ConfigurationPropertyName name)
+   + ConfigurationPropertyState containsDescendantOf(ConfigurationPropertyName name)
+   + Object getUnderlyingSource()
+     {final} ConfigurationProperty find(PropertyMapping[] mappings,ConfigurationPropertyName name)
+     PropertySource<?> getPropertySource()
+     {final} PropertyMapper getMapper()
+   - ConfigurationProperty find(PropertyMapping mapping)
+}
+
+class ConfigurationPropertySourcesPropertySource<ConfigurationPropertySource>{
+    +  Object getProperty(String name)
+    +  Origin getOrigin(String name)
+       ConfigurationProperty findConfigurationProperty(String name)
+       ConfigurationProperty findConfigurationProperty(ConfigurationPropertyName name)
+}
+class  ConfigurationPropertySources{
+    -{static,final}  String ATTACHED_PROPERTY_SOURCE_NAME
+    +{static}isAttachedConfigurationPropertySource(PropertySource<?> propertySource)
+    +{static} void attach(Environment environment)
+    +{static}  Iterable<ConfigurationPropertySource> get(Environment environment)
+    +{static}  Iterable<ConfigurationPropertySource> from(PropertySource<?> source)
+    -{static} Iterable<ConfigurationPropertySource> from(Iterable<PropertySource<?>> sources)
+    -{static}  Stream<PropertySource<?>> streamPropertySources(PropertySources sources)
+    -{static} Stream<PropertySource<?>> flatten(PropertySource<?> source)
+}
+class DelegatingPropertyMapper{
+     -{static,final} PropertyMapping[] NONE
+     -{final}  PropertyMapper first
+     -{final}  PropertyMapper second
+     + PropertyMapping[] map(String propertySourceName)
+     + PropertyMapping[] map(ConfigurationPropertyName configurationPropertyName)
+     - PropertyMapping[] map(PropertyMapper mapper,ConfigurationPropertyName configurationPropertyName)
+     - PropertyMapping[] map(PropertyMapper mapper, String propertySourceName)
+     - PropertyMapping[] merge(PropertyMapping[] first,PropertyMapping[] second)
+}
+class SystemEnvironmentPropertyMapper{
+    +{static,final} PropertyMapper INSTANCE
+    + PropertyMapping[] map(ConfigurationPropertyName configurationPropertyName)
+    + PropertyMapping[] map(String propertySourceName)
+    - ConfigurationPropertyName convertName(String propertySourceName)
+    - String convertName(ConfigurationPropertyName name)
+    - String convertName(ConfigurationPropertyName name, int numberOfElements)
+    - String convertLegacyName(ConfigurationPropertyName name)
+    - Object convertLegacyNameElement(String element)
+    - CharSequence processElementValue(CharSequence value)
+    - static boolean isNumber(String string)
+
+}
+class DefaultPropertyMapper{
+    -{static,final} PropertyMapper INSTANCE
+    -{final} LastMapping<ConfigurationPropertyName> lastMappedConfigurationPropertyName
+    -{final} LastMapping<String> lastMappedPropertyName
+    + PropertyMapping[] map(ConfigurationPropertyName configurationPropertyName)
+    + PropertyMapping[] map(String propertySourceName)
+    - PropertyMapping[] tryMap(String propertySourceName)
+}
+class SpringIterableConfigurationPropertySource{
+    -{volatile} Object cacheKey
+    -{volatile} Cache cache
+    +ConfigurationProperty getConfigurationProperty(ConfigurationPropertyName name)
+    +ConfigurationProperty getConfigurationProperty(ConfigurationPropertyName name)
+    + Iterator<ConfigurationPropertyName> iterator()
+    + ConfigurationPropertyState containsDescendantOf(ConfigurationPropertyName name)
+    - assertEnumerablePropertySource()
+    - PropertyMapping[] getPropertyMappings(Cache cache)
+    - Cache getCache()
+      EnumerablePropertySource<?> getPropertySource()
+}
+class ConfigurationProperty{
+
+
+}
+class ConfigurationPropertySource{
+  	 ConfigurationProperty getConfigurationProperty(ConfigurationPropertyName name)
+     ConfigurationPropertyState containsDescendantOf(ConfigurationPropertyName name)
+     ConfigurationPropertySource filter(Predicate<ConfigurationPropertyName> filter)
+     ConfigurationPropertySource withAliases(ConfigurationPropertyNameAliases aliases)
+     Object getUnderlyingSource()
+}
+SpringConfigurationPropertySource ..|> ConfigurationPropertySource
+SpringIterableConfigurationPropertySource --|>SpringConfigurationPropertySource
+SpringIterableConfigurationPropertySource ..|> IterableConfigurationPropertySource
+ConfigurationPropertySource ..>ConfigurationPropertyName
+ConfigurationPropertySources o..>ConfigurationPropertySourcesPropertySource
+ConfigurationPropertySources o..>ConfigurationPropertyName
+ConfigurationPropertySource --> ConfigurationProperty
+interface IterableConfigurationPropertySource{
+}
+interface PropertyMapper{
+    PropertyMapping[] NO_MAPPINGS
+    PropertyMapping[] map(ConfigurationPropertyName configurationPropertyName)
+    PropertyMapping[] map(String propertySourceName);
+}
+DelegatingPropertyMapper ..|> PropertyMapper
+SystemEnvironmentPropertyMapper ..|> PropertyMapper
+DefaultPropertyMapper ..|> PropertyMapper
+DelegatingPropertyMapper -->PropertyMapper
+SpringConfigurationPropertySource -->SystemEnvironmentPropertyMapper
+SpringConfigurationPropertySource -->DefaultPropertyMapper
+IterableConfigurationPropertySource --|>ConfigurationPropertySource
+IterableConfigurationPropertySource --|>Iterable
+
+interface ConfigurableConversionService <<empty>>
+@enduml

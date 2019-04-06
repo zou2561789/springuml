@@ -1,0 +1,79 @@
+@startuml
+class  DefaultResourceLoader {
+    - ClassLoader classLoader
+    - {final} Set<ProtocolResolver> protocolResolvers
+    - {final} Map<Class<?>, Map<Resource, ?>> resourceCaches
+    + ClassLoader getClassLoader()
+    + Collection<ProtocolResolver> getProtocolResolvers()
+    +  <T> Map<Resource, T> getResourceCache(Class<T> valueType)
+    + void clearResourceCaches()
+    + Resource getResource(String location)
+    Resource getResourceByPath(String path)
+    - void setClassLoader(@Nullable ClassLoader classLoader)
+    - void addProtocolResolver(ProtocolResolver resolver)
+}
+class ClassPathContextResource{
+  + String getPathWithinContext()
+  + Resource createRelative(String relativePath)
+}
+interface ProtocolResolver{
+  Resource resolve(String location, ResourceLoader resourceLoader)
+}
+abstract class AbstractResource{
+   + boolean exists()
+   + boolean isReadable()
+   + boolean isOpen()
+   + boolean isFile()
+   + URL getURL()
+   + URI getURI()
+   + File getFile()
+   + ReadableByteChannel readableChannel()
+   + long contentLength()
+   + long lastModified()
+   +  File getFileForLastModifiedCheck()
+   + Resource createRelative(String relativePath)
+   + String getFilename()
+   + boolean equals(Object other)
+   + int hashCode()
+   + String toString()
+}
+interface WritableResource{
+   boolean isWritable()
+   OutputStream getOutputStream() throws IOException
+   default WritableByteChannel writableChannel() throws IOException
+}
+interface ResourceLoader{
+  String CLASSPATH_URL_PREFIX
+  Resource getResource(String location)
+  ClassLoader getClassLoader()
+}
+interface Resource{
+  boolean isReadable()
+  boolean isOpen()
+  boolean isFile()
+  URL getURL() throws IOException
+  URI getURI() throws IOException
+  File getFile() throws IOException
+  ReadableByteChannel readableChannel() throws IOException
+  long contentLength() throws IOException
+  long lastModified() throws IOException
+  Resource createRelative(String relativePath) throws IOException
+  String getFilename()
+  String getDescription()
+}
+interface InputStreamSource{
+     InputStream getInputStream() throws IOException
+}
+interface ContextResource{
+  String getPathWithinContext()
+}
+
+DefaultResourceLoader ..|>ResourceLoader
+DefaultResourceLoader --> ClassPathContextResource
+DefaultResourceLoader <..o Resource
+Resource --|>InputStreamSource
+WritableResource --|>Resource
+ClassPathContextResource ..|>ContextResource
+ContextResource --|>Resource
+AbstractResource ..|>Resource
+@enduml
