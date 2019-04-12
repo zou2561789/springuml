@@ -1,0 +1,11 @@
+@startuml
+
+class StringValueResolver{
+
+}
+interface PropertyResolver{
+}
+interface ConfigurablePropertyResolver{
+}
+
+@enduml

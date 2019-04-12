@@ -37,6 +37,58 @@ abstract class AbstractResource{
    + int hashCode()
    + String toString()
 }
+abstract class AbstractFileResolvingResource{
+    + boolean exists()
+    + boolean isReadable()
+    + boolean isFile()
+    + File getFile()
+    + File getFileForLastModifiedCheck()
+    + ReadableByteChannel readableChannel() throws IOException
+    + long contentLength() throws IOException
+    + long lastModified() throws IOException
+     boolean isFile(URI uri)
+     File getFile(URI uri)
+     void customizeConnection(URLConnection con) throws IOException
+     void customizeConnection(HttpURLConnection con) throws IOException
+}
+class UrlResource{
+       - {final} URI uri
+       - {final} URL url
+       - {final} URL cleanedUrl
+       + InputStream getInputStream() throws IOException
+       + URL getURL()
+       + URI getURI() throws IOException
+       + boolean isFile()
+       + File getFile() throws IOException
+       + Resource createRelative(String relativePath) throws MalformedURLException
+       + String getFilename()
+       + String getDescription()
+       + boolean equals(Object other)
+       + int hashCode()
+       - URL getCleanedUrl(URL originalUrl, String originalPath)
+}
+class FileUrlResource{
+    -{volatile} File file
+    + File getFile() throws IOException
+    + boolean isWritable()
+    + OutputStream getOutputStream()  throws IOException
+    + WritableByteChannel writableChannel() throws IOException
+    + Resource createRelative(String relativePath) throws MalformedURLException
+}
+class ClassPathResource{
+  -{final} path
+  - ClassLoader classLoader
+  - Class<?> clazz
+  + {final}  String getPath()
+  + {final} ClassLoader getClassLoader()
+  + boolean exists()
+  + Resource createRelative(String relativePath)
+  + InputStream getInputStream() throws IOException
+  + Resource createRelative(String relativePath)
+  + URL getURL() throws IOException
+  + String getFilename()
+    URL resolveURL()
+}
 interface WritableResource{
    boolean isWritable()
    OutputStream getOutputStream() throws IOException
@@ -67,7 +119,9 @@ interface InputStreamSource{
 interface ContextResource{
   String getPathWithinContext()
 }
-
+FileUrlResource --|>UrlResource
+FileUrlResource ..|> WritableResource
+UrlResource --|>AbstractFileResolvingResource
 DefaultResourceLoader ..|>ResourceLoader
 DefaultResourceLoader --> ClassPathContextResource
 DefaultResourceLoader <..o Resource

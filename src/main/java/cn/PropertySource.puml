@@ -60,6 +60,10 @@ PropertySources <|-- MutablePropertySources
 PropertySources *-- PropertySource
 note left:PropertySources 是作为PropertySource的一个集合操作存在的
 
+interface ConfigurableEnvironment{
+}
+interface Environment{
+}
 
 interface PropertyResolver{
  	boolean containsProperty(String key)
@@ -116,8 +120,10 @@ abstract AbstractPropertyResolver{
 }
 AbstractPropertyResolver --* ConfigurableConversionService
 ConfigurablePropertyResolver --|>PropertyResolver
-
-
+ConfigurableEnvironment --|>Environment
+ConfigurableEnvironment --|>ConfigurablePropertyResolver
+Environment --|>PropertyResolver
+AbstractPropertyResolver ..|>ConfigurablePropertyResolver
 
 interface ConversionService{
 boolean canConvert(@Nullable Class<?> sourceType, Class<?> targetType);
