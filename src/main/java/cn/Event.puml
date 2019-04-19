@@ -1,0 +1,94 @@
+@startuml
+abstract class ApplicationEvent{
+}
+class SimpleApplicationEventMulticaster{
+    - Executor taskExecutor
+    - ErrorHandler errorHandler
+    + void setTaskExecutor(@Nullable Executor taskExecutor)
+    + void setErrorHandler(@Nullable ErrorHandler errorHandler)
+    + void multicastEvent(ApplicationEvent event)
+    + void multicastEvent(final ApplicationEvent event, @Nullable ResolvableType eventType)
+    Executor getTaskExecutor()
+    ErrorHandler getErrorHandler()
+    void invokeListener(ApplicationListener<?> listener, ApplicationEvent event)
+    - ResolvableType resolveDefaultEventType(ApplicationEvent event)
+    - void doInvokeListener(ApplicationListener listener, ApplicationEvent event)
+    - boolean matchesClassCastMessage(String classCastMessage, Class<?> eventClass)
+}
+class GenericApplicationListenerAdapter{
+    -{final,static} Map<Class<?>, ResolvableType> eventTypeCache
+    -{final} ApplicationListener<ApplicationEvent> delegate
+    -{final} ResolvableType declaredEventType
+    -{static}  static ResolvableType resolveDeclaredEventType(ApplicationListener<ApplicationEvent> listener)
+    {static} ResolvableType resolveDeclaredEventType(Class<?> listenerType)
+    + boolean supportsEventType(Class<? extends ApplicationEvent> eventType)
+    + boolean supportsSourceType(@Nullable Class<?> sourceType)
+    + int getOrder()
+}
+abstract class AbstractApplicationEventMulticaster{
+  -{final} ListenerRetriever defaultRetriever
+  {final}  Map<ListenerCacheKey, ListenerRetriever> retrieverCache
+  - ClassLoader beanClassLoader
+  - BeanFactory beanFactory
+  - Object retrievalMutex
+  + void setBeanClassLoader(ClassLoader classLoader)
+  + void setBeanFactory(BeanFactory beanFactory)
+  + addApplicationListener(ApplicationListener<?> listener)
+  + void addApplicationListenerBean(String listenerBeanName)
+  + void removeApplicationListener(ApplicationListener<?> listener)
+  + void removeApplicationListenerBean(String listenerBeanName)
+  + void removeAllListeners()
+  Collection<ApplicationListener<?>> getApplicationListeners()
+  Collection<ApplicationListener<?>> getApplicationListeners(ApplicationEvent event, ResolvableType eventType)
+  Collection<ApplicationListener<?>> retrieveApplicationListeners(ResolvableType eventType, @Nullable Class<?> sourceType, @Nullable ListenerRetriever retriever)
+  boolean supportsEvent(Class<?> listenerType, ResolvableType eventType)
+  boolean supportsEvent(ApplicationListener<?> listener, ResolvableType eventType, @Nullable Class<?> sourceType)
+  - BeanFactory getBeanFactory()
+}
+class ListenerCacheKey{
+    private final ResolvableType eventType
+    private final Class<?> sourceType
+    boolean equals(Object other)
+    int hashCode()
+    int compareTo(ListenerCacheKey other)
+}
+class ListenerRetriever{
+  +{final} Set<ApplicationListener<?>> applicationListeners
+  +{final} Set<String> applicationListenerBeans
+  -{final} boolean preFiltered
+  + Collection<ApplicationListener<?>> getApplicationListeners()
+}
+interface SmartApplicationListener{
+    boolean supportsEventType(Class<? extends ApplicationEvent> eventType)
+    default boolean supportsSourceType(@Nullable Class<?> sourceType)
+    default int getOrder()
+}
+interface GenericApplicationListener{
+   boolean supportsEventType(ResolvableType eventType);
+   default boolean supportsSourceType(@Nullable Class<?> sourceType)
+   default int getOrder()
+}
+interface ApplicationEventMulticaster{
+  void addApplicationListener(ApplicationListener<?> listener)
+  void addApplicationListenerBean(String listenerBeanName)
+  void removeApplicationListener(ApplicationListener<?> listener)
+  void removeApplicationListenerBean(String listenerBeanName)
+  void removeAllListeners()
+  void multicastEvent(ApplicationEvent event)
+  void multicastEvent(ApplicationEvent event, @Nullable ResolvableType eventType)
+}
+interface ApplicationListener{
+  void onApplicationEvent(E event);
+}
+AbstractApplicationEventMulticaster ..|>ApplicationEventMulticaster
+AbstractApplicationEventMulticaster ..|>BeanClassLoaderAware
+AbstractApplicationEventMulticaster ..|>BeanFactoryAware
+AbstractApplicationEventMulticaster <--o  GenericApplicationListener
+AbstractApplicationEventMulticaster <--o  SmartApplicationListener
+AbstractApplicationEventMulticaster <..o  ApplicationListener
+AbstractApplicationEventMulticaster <--o  GenericApplicationListenerAdapter
+
+
+
+SimpleApplicationEventMulticaster --|>AbstractApplicationEventMulticaster
+@enduml

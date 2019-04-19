@@ -23,3 +23,9 @@ K
 src/main/java/cn/Scope.puml,d/3/d3dc64f44ec5165d4f249c2e2d68b3d6e2d3cdb4
 T
 $src/main/java/cn/BeanDefinition.puml,6/2/6299f5559f0b570a6b276b670fcb3412eb0dffd6
+X
+(src/main/java/cn/LifecycleProcessor.puml,7/8/78cf164fd136727d158e2c7229c3d49ea257d741
+S
+#src/main/java/cn/MessageSource.puml,e/0/e0a7c6bf74436cc1e54f3559567c0aadc10399c4
+K
+src/main/java/cn/Event.puml,b/6/b6a4a802953faff9a43b250e1850a75d5c98ebe7

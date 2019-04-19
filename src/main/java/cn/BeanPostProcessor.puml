@@ -1,6 +1,9 @@
 @startuml
-
-interface BeanPostProcessor{
+class PostProcessorRegistrationDelegate{
 }
+interface BeanPostProcessor{
+
+}
+
 
 @enduml

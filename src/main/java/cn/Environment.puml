@@ -2,12 +2,72 @@
 interface EnvironmentPostProcessor{
 void postProcessEnvironment(ConfigurableEnvironment environment,SpringApplication application)
 }
+class AbstractEnvironment{
+    +{static,final} String IGNORE_GETENV_PROPERTY_NAME
+    +{static,final} String ACTIVE_PROFILES_PROPERTY_NAME
+    +{static,final} String DEFAULT_PROFILES_PROPERTY_NAME
+    +{static,final}  String RESERVED_DEFAULT_PROFILE_NAME
+    -{final} Set<String> activeProfiles
+    -{final} Set<String> defaultProfiles
+    -{final} MutablePropertySources propertySources
+    -{final} ConfigurablePropertyResolver propertyResolver
+    + String[] getActiveProfiles()
+    + void setActiveProfiles(String... profiles)
+    + void addActiveProfile(String profile)
+    + String[] getDefaultProfiles()
+    + void setDefaultProfiles(String... profiles)
+    + boolean acceptsProfiles(String... profiles)
+    + boolean acceptsProfiles(Profiles profiles)
+    + public MutablePropertySources getPropertySources()
+    + public Map<String, Object> getSystemProperties()
+    + public Map<String, Object> getSystemEnvironment()
+    + void merge(ConfigurableEnvironment parent)
+    + ConfigurableConversionService getConversionService()
+    + void setConversionService(ConfigurableConversionService conversionService)
+    + void setPlaceholderPrefix(String placeholderPrefix)
+    + void setPlaceholderSuffix(String placeholderSuffix)
+    + void setValueSeparator(@Nullable String valueSeparator)
+    + void setIgnoreUnresolvableNestedPlaceholders(boolean ignoreUnresolvableNestedPlaceholders)
+    + void setRequiredProperties(String... requiredProperties)
+    + void validateRequiredProperties() throws MissingRequiredPropertiesException
+    + boolean containsProperty(String key)
+    + String getProperty(String key)
+    + String getProperty(String key, String defaultValue)
+    + <T> T getProperty(String key, Class<T> targetType)
+    + <T> T getProperty(String key, Class<T> targetType, T defaultValue)
+    + String getRequiredProperty(String key) throws IllegalStateException
+    + <T> T getRequiredProperty(String key, Class<T> targetType) throws IllegalStateException
+    + String resolvePlaceholders(String text)
+    + String resolveRequiredPlaceholders(String text) throws IllegalArgumentException
+    + String toString()
+      void customizePropertySources(MutablePropertySources propertySources)
+      Set<String> getReservedDefaultProfiles()
+      Set<String> doGetActiveProfiles()
+      Set<String> doGetDefaultProfiles()
+      boolean isProfileActive(String profile)
+      protected void validateProfile(String profile)
+      boolean suppressGetenvAccess()
+
+
+}
 interface ConfigurableEnvironment{
+    void setActiveProfiles(String... profiles)
+    void addActiveProfile(String profile)
+    void setDefaultProfiles(String... profiles)
+    MutablePropertySources getPropertySources()
+    Map<String, Object> getSystemProperties()
+    Map<String, Object> getSystemEnvironment()
+    void merge(ConfigurableEnvironment parent)
 }
 interface Environment{
+    String[] getActiveProfiles()
+    String[] getDefaultProfiles()
+    boolean acceptsProfiles(String... profiles)
+    boolean acceptsProfiles(Profiles profiles)
 }
 ConfigurableEnvironment --|>ConfigurablePropertyResolver
 ConfigurableEnvironment --|>Environment
-
-
+Environment --|>PropertyResolver
+AbstractEnvironment ..|>ConfigurableEnvironment
+AbstractEnvironment <..o PropertySourcesPropertyResolver
 @enduml

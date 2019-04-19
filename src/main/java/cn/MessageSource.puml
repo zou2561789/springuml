@@ -1,0 +1,20 @@
+@startuml
+class ResourceBundleMessageSource{
+}
+abstract class AbstractResourceBasedMessageSource{
+}
+abstract class AbstractMessageSource{
+}
+abstract class MessageSourceSupport{
+}
+interface HierarchicalMessageSource{
+    void setParentMessageSource(@Nullable MessageSource parent)
+    MessageSource getParentMessageSource()
+}
+ResourceBundleMessageSource --|> AbstractResourceBasedMessageSource
+AbstractResourceBasedMessageSource --|> AbstractMessageSource
+AbstractMessageSource --|> MessageSourceSupport
+AbstractMessageSource ..|> HierarchicalMessageSource
+ResourceBundleMessageSource --|>AbstractResourceBasedMessageSource
+HierarchicalMessageSource --|>MessageSource
+@enduml

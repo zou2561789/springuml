@@ -3,9 +3,53 @@
 class StringValueResolver{
 
 }
-interface PropertyResolver{
+class PathMatchingResourcePatternResolver{
+    -{final} ResourceLoader resourceLoader
+    - PathMatcher pathMatcher
+    + ResourceLoader getResourceLoader()
+    + ClassLoader getClassLoader()
+    + setPathMatcher(PathMatcher pathMatcher)
+    + PathMatcher getPathMatcher()
+    + Resource getResource(String location)
+    + Resource[] getResources(String locationPattern) throws IOException
+      Resource[] findAllClassPathResources(String location) throws IOException
+      Set<Resource> doFindAllClassPathResources(String path) throws IOException
+      Resource convertClassLoaderURL(URL url)
+      void addAllClassLoaderJarRoots(@Nullable ClassLoader classLoader, Set<Resource> result)
+      void addClassPathManifestEntries(Set<Resource> result)
+      Resource[] findPathMatchingResources(String locationPattern) throws IOException
+      String determineRootDir(String location)
+      Resource resolveRootDirResource(Resource original) throws IOException
+      boolean isJarResource(Resource resource) throws IOException
+      Set<Resource> doFindPathMatchingJarResources(Resource rootDirResource, URL rootDirURL, String subPattern)throws IOException
+      JarFile getJarFile(String jarFileUrl) throws IOException
+      Set<Resource> doFindPathMatchingFileResources(Resource rootDirResource, String subPattern)throws IOException
+      Set<Resource> doFindMatchingFileSystemResources(File rootDir, String subPattern) throws IOException
+      Set<File> retrieveMatchingFiles(File rootDir, String pattern) throws IOException
+      void doRetrieveMatchingFiles(String fullPattern, File dir, Set<File> result) throws IOException
+      File[] listDirectory(File dir)
+    - boolean hasDuplicate(String filePath, Set<Resource> result)
 }
-interface ConfigurablePropertyResolver{
-}
+class AntPathMatcher{
 
+}
+interface ResourcePatternResolver{
+   String CLASSPATH_ALL_URL_PREFIX
+   Resource[] getResources(String locationPattern) throws IOException
+}
+interface PathMatcher{
+    boolean isPattern(String path)
+    boolean match(String pattern, String path
+    boolean matchStart(String pattern, String path)
+    String extractPathWithinPattern(String pattern, String path)
+    Map<String, String> extractUriTemplateVariables(String pattern, String path)
+    Comparator<String> getPatternComparator(String path)
+    String combine(String pattern1, String pattern2)
+}
+PathMatchingResourcePatternResolver <..o ResourceLoader
+PathMatchingResourcePatternResolver <..o PathMatcher
+PathMatchingResourcePatternResolver <..o File
+PathMatchingResourcePatternResolver <..o URL
+PathMatchingResourcePatternResolver <..o JarFile
+AntPathMatcher ..|>PathMatcher
 @enduml

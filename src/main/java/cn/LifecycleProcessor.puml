@@ -1,0 +1,53 @@
+@startuml
+
+class DefaultLifecycleProcessor{
+ -{volatile} Boolean running
+ -{volatile} ConfigurableListableBeanFactory beanFactory
+ + void setTimeoutPerShutdownPhase(long timeoutPerShutdownPhase)
+ + void setBeanFactory(BeanFactory beanFactory)
+ + void start()
+ + void stop()
+ + void onRefresh()
+ + void onClose()
+ + boolean isRunning()
+   Map<String, Lifecycle> getLifecycleBeans()
+ - void startBeans(boolean autoStartupOnly)
+ - void doStart(Map<String, ? extends Lifecycle> lifecycleBeans, String beanName, boolean autoStartupOnly)
+ - void stopBeans()
+ - void doStop(Map<String, ? extends Lifecycle> lifecycleBeans, final String beanName,final CountDownLatch latch, final Set<String> countDownBeanNames)
+ - ConfigurableListableBeanFactory getBeanFactory()
+ - boolean matchesBeanType(Class<?> targetType, String beanName, BeanFactory beanFactory)
+}
+class LifecycleGroup{
+  -{final} int phase
+  -{final} int timeout
+  -{final} Map<String, ? extends Lifecycle> lifecycleBeans
+  -{final}  boolean autoStartupOnly
+  -{final} List<LifecycleGroupMember> members
+  - int smartMemberCount
+  + void add(String name, Lifecycle bean)
+  + void start()
+  + void stop()
+}
+class LifecycleGroupMember{
+ -{final} String name
+ -{final} Lifecycle bean
+}
+interface  LifecycleProcessor{
+  void onRefresh()
+  void onClose()
+}
+interface SmartLifecycle{
+  boolean isAutoStartup()
+  void stop(Runnable callback)
+  int getPhase()
+}
+LifecycleProcessor --|>Lifecycle
+DefaultLifecycleProcessor ..|>LifecycleProcessor
+DefaultLifecycleProcessor ..|>BeanFactoryAware
+DefaultLifecycleProcessor <..o ConfigurableListableBeanFactory
+DefaultLifecycleProcessor <..o ConfigurableListableBeanFactory
+DefaultLifecycleProcessor <..o SmartLifecycle
+DefaultLifecycleProcessor <..o LifecycleGroupMember
+DefaultLifecycleProcessor <..o LifecycleProcessor
+@enduml
