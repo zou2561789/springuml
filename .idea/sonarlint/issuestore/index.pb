@@ -29,3 +29,5 @@ S
 #src/main/java/cn/MessageSource.puml,e/0/e0a7c6bf74436cc1e54f3559567c0aadc10399c4
 K
 src/main/java/cn/Event.puml,b/6/b6a4a802953faff9a43b250e1850a75d5c98ebe7
+Q
+!src/main/java/cn/BeanFactory.puml,8/a/8ac20b6dbc10d0bc37c969c222e9cb919c0a10b1

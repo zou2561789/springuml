@@ -208,44 +208,8 @@ ElementsParser ..>ElementType
 
 
 
-class BindConverter{
-   -{static,final} Set<Class<?>> EXCLUDED_EDITORS
-   -{static} BindConverter sharedInstance
-   -{static} ConversionService conversionService
-   {static}BindConverter get(ConversionService conversionService,Consumer<PropertyEditorRegistry> propertyEditorInitializer)   -List<ConversionService> getConversionServices(ConversionService conversionService,Consumer<PropertyEditorRegistry> propertyEditorInitializer)
-   + canConvert(Object value, ResolvableType type,Annotation... annotations)
-   +  T convert(Object result, Bindable<T> target)
-   + <T> T convert(Object value, ResolvableType type, Annotation... annotations)
 
-}
-class ResolvableTypeDescriptor{
 
-}
-class CompositeConversionService{
-  -{final} List<ConversionService> delegates
-  + boolean canConvert(Class<?> sourceType, Class<?> targetType)
-  + boolean canConvert(TypeDescriptor sourceType, TypeDescriptor targetType)
-  +  <T> T convert(Object source, Class<T> targetType)
-  +  convert(Object source, TypeDescriptor sourceType,TypeDescriptor targetType)
-}
-class TypeConverterConversionService{
-  -SimpleTypeConverter createTypeConverter( Consumer<PropertyEditorRegistry> initializer)
-  + boolean canConvert(TypeDescriptor sourceType, TypeDescriptor targetType)
-}
-class TypeConverterConverter{
-    -{final} SimpleTypeConverter typeConverter
-     +Set<ConvertiblePair> getConvertibleTypes()
-     + boolean matches(TypeDescriptor sourceType, TypeDescriptor targetType)
-     Object convert(Object source, TypeDescriptor sourceType,TypeDescriptor targetType)
-     + PropertyEditor getPropertyEditor(Class<?> type)
-}
-
-class TypeDescriptor{
-
-}
-
-class SimpleTypeConverter
-note left: 只是设置类TypeConverterDelegate并将自己作为属性编辑器仓库 其他全部由TypeConverterSupport实现
 class TypeConverterDelegate{
     -{static} PropertyEditorRegistrySupport propertyEditorRegistry;
     -{final} PropertyEditorRegistrySupport propertyEditorRegistry
@@ -263,8 +227,7 @@ class TypeConverterDelegate{
     String buildKeyedPropertyName(@Nullable String propertyName, Object key)
     boolean canCreateCopy(Class<?> requiredType)
 }
-abstract class  TypeConverterSupport
-note left:只是实现类TypeConverter接口并且委托给TypeConverterDelegate
+
 
 class PropertyEditorRegistrySupport{
     - ConversionService conversionService
@@ -305,25 +268,9 @@ interface PropertyEditorRegistry{
     void registerCustomEditor(@Nullable Class<?> requiredType, @Nullable String propertyPath, PropertyEditor propertyEditor)
     PropertyEditor findCustomEditor(@Nullable Class<?> requiredType, @Nullable String propertyPath)
 }
-interface TypeConverter{
-   <T> T convertIfNecessary(@Nullable Object value, @Nullable Class<T> requiredType) throws TypeMismatchException
-   <T> T convertIfNecessary(@Nullable Object value, @Nullable Class<T> requiredType,@Nullable MethodParameter methodParam) throws TypeMismatchException
-   <T> T convertIfNecessary(@Nullable Object value, @Nullable Class<T> requiredType, @Nullable Field field)throws TypeMismatchException
-   <T> T convertIfNecessary(@Nullable Object value, @Nullable Class<T> requiredType,@Nullable TypeDescriptor typeDescriptor) throws TypeMismatchException
 
-}
-CompositeConversionService ..>BindConverter
-CompositeConversionService ..>ResolvableTypeDescriptor
-CompositeConversionService --|>ConversionService
+
 ResolvableTypeDescriptor --|>TypeDescriptor
-TypeConverterConversionService --|> GenericConversionService
-GenericConversionService ..|> ConversionService
-TypeConverterConversionService ..>TypeConverterConverter
-TypeConverterConverter ..>SimpleTypeConverter
-TypeConverterConverter ..|> ConditionalGenericConverter
-SimpleTypeConverter --|>TypeConverterSupport
-TypeConverterSupport --|> PropertyEditorRegistrySupport
-TypeConverterSupport ..|>TypeConverter
 PropertyEditorRegistrySupport o-->CustomEditorHolder
 CustomEditorHolder ..> PropertyEditor
 

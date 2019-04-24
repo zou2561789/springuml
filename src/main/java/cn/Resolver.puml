@@ -33,6 +33,24 @@ class PathMatchingResourcePatternResolver{
 class AntPathMatcher{
 
 }
+class StandardBeanExpressionResolver{
+  +{static,final}  String DEFAULT_EXPRESSION_PREFIX
+  +{static,final}  String DEFAULT_EXPRESSION_SUFFIX
+  - String expressionPrefix
+  - String expressionSuffix
+  - ExpressionParser expressionParser
+  - {final} Map<String, Expression> expressionCache
+  - {final} Map<BeanExpressionContext, StandardEvaluationContext> evaluationCache
+  - {final} ParserContext beanExpressionParserContext
+  + void setExpressionPrefix(String expressionPrefix)
+  + void setExpressionSuffix(String expressionSuffix)
+  + void setExpressionParser(ExpressionParser expressionParser)
+  + Object evaluate(@Nullable String value, BeanExpressionContext evalContext) throws BeansException
+  + void customizeEvaluationContext(StandardEvaluationContext evalContext)
+}
+interface BeanExpressionResolver{
+  Object evaluate(@Nullable String value, BeanExpressionContext evalContext) throws BeansException
+}
 interface ResourcePatternResolver{
    String CLASSPATH_ALL_URL_PREFIX
    Resource[] getResources(String locationPattern) throws IOException
@@ -52,4 +70,5 @@ PathMatchingResourcePatternResolver <..o File
 PathMatchingResourcePatternResolver <..o URL
 PathMatchingResourcePatternResolver <..o JarFile
 AntPathMatcher ..|>PathMatcher
+StandardBeanExpressionResolver ..|>BeanExpressionResolver
 @enduml

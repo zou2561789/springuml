@@ -13,15 +13,168 @@ class SimpleAliasRegistry{
        boolean allowAliasOverriding()
        void checkForAliasCircle(String name, String alias)
      - void retrieveAliases(String name, List<String> result)
-
 }
 class DefaultSingletonBeanRegistry{
+   -{final}  Map<String, Object> singletonObjects
+   -{final}  Map<String, ObjectFactory<?>> singletonFactories
+   -{final}  Map<String, Object> earlySingletonObjects
+   -{final}  Set<String> registeredSingletons
+   -{final}  Set<String> singletonsCurrentlyInCreation
+   -{final}  Set<String> inCreationCheckExclusions
+   -{final}  Set<Exception> suppressedExceptions
+   -{final}  boolean singletonsCurrentlyInDestruction
+   -{final}  Map<String, Object> disposableBeans
+   -{final}  Map<String, Set<String>> containedBeanMap
+   -{final}  Map<String, Set<String>> dependentBeanMap
+   -{final}  Map<String, Set<String>> dependenciesForBeanMap
+   + void registerSingleton(String beanName, Object singletonObject) throws IllegalStateException
+   + Object getSingleton(String beanName)
+   + boolean containsSingleton(String beanName)
+   + void setCurrentlyInCreation(String beanName, boolean inCreation)
+   + boolean isCurrentlyInCreation(String beanName)
+   + boolean isSingletonCurrentlyInCreation(String beanName)
+   + void registerDisposableBean(String beanName, DisposableBean bean)
+   + void registerContainedBean(String containedBeanName, String containingBeanName)
+   + void registerDependentBean(String beanName, String dependentBeanName)
+   + String[] getDependentBeans(String beanName)
+   + String[] getDependenciesForBean(String beanName)
+   + void destroySingletons()
+   + void destroySingleton(String beanName)
+   + {final}   Object getSingletonMutex()
+     void addSingleton(String beanName, Object singletonObject)
+     void addSingletonFactory(String beanName, ObjectFactory<?> singletonFactory)
+     Object getSingleton(String beanName, boolean allowEarlyReference)
+     Object getSingleton(String beanName, ObjectFactory<?> singletonFactory)
+     void onSuppressedException(Exception ex)
+     void removeSingleton(String beanName)
+     String[] getSingletonNames()
+     int getSingletonCount()
+     boolean isActuallyInCreation(String beanName)
+     void beforeSingletonCreation(String beanName)
+     void afterSingletonCreation(String beanName)
+     boolean isDependent(String beanName, String dependentBeanName)
+     boolean hasDependentBean(String beanName)
+     void clearSingletonCache()
+     void destroyBean(String beanName, @Nullable DisposableBean bean)
+   - boolean isDependent(String beanName, String dependentBeanName, @Nullable Set<String> alreadySeen)
 }
 abstract class FactoryBeanRegistrySupport{
+    -{final} Map<String, Object> factoryBeanObjectCache
+    Class<?> getTypeForFactoryBean(final FactoryBean<?> factoryBean)
+    Object getCachedObjectForFactoryBean(String beanName)
+    Object getObjectFromFactoryBean(FactoryBean<?> factory, String beanName, boolean shouldPostProcess)
+    Object doGetObjectFromFactoryBean(final FactoryBean<?> factory, final String beanName) throws BeanCreationException
+    Object postProcessObjectFromFactoryBean(Object object, String beanName) throws BeansException
+    FactoryBean<?> getFactoryBean(String beanName, Object beanInstance) throws BeansException
+    void removeSingleton(String beanName)
+    void clearSingletonCache()
+    AccessControlContext getAccessControlContext()
 }
 abstract class AbstractAutowireCapableBeanFactory{
 }
 abstract class AbstractBeanFactory{
+    - BeanFactory parentBeanFactory
+    - ClassLoader beanClassLoader
+    - ClassLoader tempClassLoader
+    - boolean cacheBeanMetadata
+    - BeanExpressionResolver beanExpressionResolver
+    - ConversionService conversionService
+    - {final} Set<PropertyEditorRegistrar> propertyEditorRegistrars
+    - {final}  Map<Class<?>, Class<? extends PropertyEditor>> customEditors
+    - TypeConverter typeConverter
+    - List<StringValueResolver> embeddedValueResolvers
+    - List<BeanPostProcessor> beanPostProcessors
+    - {volatile} boolean hasInstantiationAwareBeanPostProcessors
+    - {volatile} boolean hasDestructionAwareBeanPostProcessors
+    - {final} Map<String, Scope> scopes
+    - SecurityContextProvider securityContextProvider
+    - {final} Map<String, RootBeanDefinition> mergedBeanDefinitions
+    - {final} Set<String> alreadyCreated
+    - {final} ThreadLocal<Object> prototypesCurrentlyInCreation
+    + Object getBean(String name) throws BeansException
+    + <T> T getBean(String name, Class<T> requiredType) throws BeansException
+    + Object getBean(String name, Object... args) throws BeansException
+    + <T> T getBean(String name, @Nullable Class<T> requiredType, @Nullable Object... args) throws BeansException
+      <T> T doGetBean(final String name, @Nullable final Class<T> requiredType,@Nullable final Object[] args, boolean typeCheckOnly) throws BeansException
+    + boolean containsBean(String name)
+    + boolean isSingleton(String name) throws NoSuchBeanDefinitionException
+    + boolean isPrototype(String name) throws NoSuchBeanDefinitionException
+    + boolean isTypeMatch(String name, ResolvableType typeToMatch) throws NoSuchBeanDefinitionException
+    + boolean isTypeMatch(String name, Class<?> typeToMatch) throws NoSuchBeanDefinitionException
+    + Class<?> getType(String name) throws NoSuchBeanDefinitionException
+    + String[] getAliases(String name)
+    + BeanFactory getParentBeanFactory()
+    + boolean containsLocalBean(String name)
+    + void setParentBeanFactory(@Nullable BeanFactory parentBeanFactory)
+    + void setBeanClassLoader(@Nullable ClassLoader beanClassLoader)
+    + ClassLoader getBeanClassLoader()
+    + void setTempClassLoader(@Nullable ClassLoader tempClassLoader)
+    + ClassLoader getTempClassLoader()
+    + void setCacheBeanMetadata(boolean cacheBeanMetadata)
+    + boolean isCacheBeanMetadata()
+    + void setBeanExpressionResolver(@Nullable BeanExpressionResolver resolver)
+    + BeanExpressionResolver getBeanExpressionResolver()
+    + void setConversionService(@Nullable ConversionService conversionService)
+    + ConversionService getConversionService()
+    + void addPropertyEditorRegistrar(PropertyEditorRegistrar registrar)
+    + Set<PropertyEditorRegistrar> getPropertyEditorRegistrars()
+    + void registerCustomEditor(Class<?> requiredType, Class<? extends PropertyEditor> propertyEditorClass)
+    + void copyRegisteredEditorsTo(PropertyEditorRegistry registry)
+    + Map<Class<?>, Class<? extends PropertyEditor>> getCustomEditors()
+    + void setTypeConverter(TypeConverter typeConverter)
+      TypeConverter getCustomTypeConverter()
+    + TypeConverter getTypeConverter()
+    + void addEmbeddedValueResolver(StringValueResolver valueResolver)
+    + boolean hasEmbeddedValueResolver()
+    + String resolveEmbeddedValue(@Nullable String value)
+    + void addBeanPostProcessor(BeanPostProcessor beanPostProcessor)
+    + int getBeanPostProcessorCount()
+      List<BeanPostProcessor> getBeanPostProcessors()
+      boolean hasInstantiationAwareBeanPostProcessors()
+      boolean hasDestructionAwareBeanPostProcessors()
+    + void registerScope(String scopeName, Scope scope)
+    + String[] getRegisteredScopeNames()
+    + Scope getRegisteredScope(String scopeName)
+    + void setSecurityContextProvider(SecurityContextProvider securityProvider)
+    + AccessControlContext getAccessControlContext()
+    + void copyConfigurationFrom(ConfigurableBeanFactory otherFactory)
+    + BeanDefinition getMergedBeanDefinition(String name) throws BeansException
+      boolean isFactoryBean(String name) throws NoSuchBeanDefinitionException
+      boolean isActuallyInCreation(String beanName
+      boolean isPrototypeCurrentlyInCreation(String beanName)
+      void beforePrototypeCreation(String beanName)
+      void afterPrototypeCreation(String beanName)
+    + void destroyBean(String beanName, Object beanInstance)
+      void destroyBean(String beanName, Object bean, RootBeanDefinition mbd)
+    + void destroyScopedBean(String beanName)
+      String transformedBeanName(String name)
+      String originalBeanName(String name)
+      void initBeanWrapper(BeanWrapper bw)
+      void registerCustomEditors(PropertyEditorRegistry registry)
+      RootBeanDefinition getMergedLocalBeanDefinition(String beanName) throws BeansException
+      RootBeanDefinition getMergedBeanDefinition(String beanName, BeanDefinition bd) throws BeanDefinitionStoreException
+      RootBeanDefinition getMergedBeanDefinition(String beanName, BeanDefinition bd, @Nullable BeanDefinition containingBd) throws BeanDefinitionStoreException
+      void checkMergedBeanDefinition(RootBeanDefinition mbd, String beanName, @Nullable Object[] args) throws BeanDefinitionStoreException
+      void clearMergedBeanDefinition(String beanName)
+      void clearMetadataCache()
+      Class<?> resolveBeanClass(final RootBeanDefinition mbd, String beanName, final Class<?>... typesToMatch) throws CannotLoadBeanClassException
+      Class<?> doResolveBeanClass(RootBeanDefinition mbd, Class<?>... typesToMatch) throws ClassNotFoundException
+      Object evaluateBeanDefinitionString(@Nullable String value, @Nullable BeanDefinition beanDefinition)
+      Class<?> predictBeanType(String beanName, RootBeanDefinition mbd, Class<?>... typesToMatch)
+      boolean isFactoryBean(String beanName, RootBeanDefinition mbd)
+      Class<?> getTypeForFactoryBean(String beanName, RootBeanDefinition mbd)
+      void markBeanAsCreated(String beanName)
+      void cleanupAfterBeanCreationFailure(String beanName)
+      boolean isBeanEligibleForMetadataCaching(String beanName)
+      boolean removeSingletonIfCreatedForTypeCheckOnly(String beanName)
+      boolean hasBeanCreationStarted()
+      Object getObjectForBeanInstance( Object beanInstance, String name, String beanName, @Nullable RootBeanDefinition mbd)
+    + boolean isBeanNameInUse(String beanName)
+      boolean requiresDestruction(Object bean, RootBeanDefinition mbd)
+      void registerDisposableBeanIfNecessary(String beanName, Object bean, RootBeanDefinition mbd)
+      abstract boolean containsBeanDefinition(String beanName)
+      abstract BeanDefinition getBeanDefinition(String beanName) throws BeansException
+      abstract Object createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args) throws BeanCreationException
 }
 interface ConfigurableListableBeanFactory{
     void ignoreDependencyType(Class<?> type)
@@ -140,4 +293,19 @@ ConfigurableBeanFactory <..o BeanPostProcessor
 ConfigurableBeanFactory <..o Scope
 ConfigurableBeanFactory <..o AccessControlContext
 ConfigurableBeanFactory <..o BeanDefinition
+AbstractBeanFactory <--o BeanFactory
+AbstractBeanFactory <--o BeanExpressionResolver
+AbstractBeanFactory <--o ConversionService
+AbstractBeanFactory <..o PropertyEditorRegistrar
+AbstractBeanFactory <..o TypeConverter
+AbstractBeanFactory <..o BeanPostProcessor
+AbstractBeanFactory <--o Scope
+AbstractBeanFactory <..o BeanDefinition
+AbstractBeanFactory <--o RootBeanDefinition
+AbstractBeanFactory <--o FactoryBean
+AbstractBeanFactory <..o BeanFactoryUtils
+AbstractBeanFactory <..o ClassLoader
+AbstractBeanFactory <..o InstantiationAwareBeanPostProcessor
+AbstractBeanFactory <..o DestructionAwareBeanPostProcessor
+AbstractBeanFactory <..o BeanWrapper
 @enduml

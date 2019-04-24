@@ -1,0 +1,14 @@
+@startuml
+
+class ResourceEditorRegistrar{
+   -{final} PropertyResolver propertyResolver
+   -{final} ResourceLoader resourceLoader
+   + void registerCustomEditors(PropertyEditorRegistry registry)
+   - void doRegisterEditor(PropertyEditorRegistry registry, Class<?> requiredType, PropertyEditor editor)
+}
+
+interface PropertyEditorRegistrar{
+void registerCustomEditors(PropertyEditorRegistry registry)
+}
+
+@enduml

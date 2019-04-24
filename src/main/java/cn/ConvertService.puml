@@ -1,0 +1,172 @@
+@startuml
+class GenericConversionService{
+  - {static}GenericConverter NO_OP_CONVERTER
+  - {static} GenericConverter NO_MATCH
+  - Converters converters
+  - Map<ConverterCacheKey, GenericConverter> converterCache
+  + void addConverter(Converter<?, ?> converter)
+  + void addConverter(Class<S> sourceType, Class<T> targetType, Converter<? super S, ? extends T> converter)
+  + void addConverter(GenericConverter converter)
+  + void removeConvertible(Class<?> sourceType, Class<?> targetType)
+  + boolean canConvert(@Nullable Class<?> sourceType, Class<?> targetType)
+  + boolean canConvert(@Nullable TypeDescriptor sourceType, TypeDescriptor targetType)
+  + boolean canBypassConvert(@Nullable TypeDescriptor sourceType, TypeDescriptor targetType)
+  + <T> T convert(@Nullable Object source, Class<T> targetType)
+  +  Object convert(@Nullable Object source, @Nullable TypeDescriptor sourceType, TypeDescriptor targetType)
+  +  convert(@Nullable Object source, TypeDescriptor targetType)
+  convertNullSource(@Nullable TypeDescriptor sourceType, TypeDescriptor targetType)
+  getConverter(TypeDescriptor sourceType, TypeDescriptor targetType)
+  getDefaultConverter(TypeDescriptor sourceType, TypeDescriptor targetType)
+  - getRequiredTypeInfo(Class<?> converterClass, Class<?> genericIfc)
+  - invalidateCache()
+  - handleConverterNotFound(@Nullable Object source, @Nullable TypeDescriptor sourceType, TypeDescriptor targetType)
+  — Object handleResult(@Nullable TypeDescriptor sourceType, TypeDescriptor targetType, @Nullable Object result)
+  - void assertNotPrimitiveTargetType(@Nullable TypeDescriptor sourceType, TypeDescriptor targetType)
+}
+
+interface ConversionService{
+boolean canConvert(@Nullable Class<?> sourceType, Class<?> targetType);
+boolean canConvert(@Nullable TypeDescriptor sourceType, TypeDescriptor targetType);
+<T> T convert(@Nullable Object source, Class<T> targetType);
+Object convert(@Nullable Object source, @Nullable TypeDescriptor sourceType, TypeDescriptor targetType);
+}
+interface ConverterRegistry{
+void addConverter(Converter<?, ?> converter);
+<S, T> void addConverter(Class<S> sourceType, Class<T> targetType, Converter<? super S, ? extends T> converter);
+void addConverter(GenericConverter converter);
+void addConverterFactory(ConverterFactory<?, ?> factory);
+void removeConvertible(Class<?> sourceType, Class<?> targetType);
+}
+
+class ConverterCacheKey{
+  -{final} TypeDescriptor sourceType
+  -{final} TypeDescriptor targetType
+  + boolean equals(Object other)
+  + int hashCode()
+  + String toString()
+  + int compareTo(ConverterCacheKey other)
+}
+class Converters{
+  - {final}Set<GenericConverter> globalConverters
+  - {final}Map<ConvertiblePair, ConvertersForPair> converters
+  + add(GenericConverter converter
+  + void remove(Class<?> sourceType, Class<?> targetType)
+  + GenericConverter find(TypeDescriptor sourceType, TypeDescriptor targetType)
+  - ConvertersForPair getMatchableConverters(ConvertiblePair convertiblePair)
+  - GenericConverter getRegisteredConverter(TypeDescriptor sourceType,TypeDescriptor targetType, ConvertiblePair convertiblePair)
+  - List<Class<?>> getClassHierarchy(Class<?> type)
+  -addInterfacesToClassHierarchy(Class<?> type, boolean asArray,List<Class<?>> hierarchy, Set<Class<?>> visited)
+  - addToClassHierarchy(int index, Class<?> type, boolean asArray,List<Class<?>> hierarchy, Set<Class<?>> visited)
+  + String toString()
+  - List<String> getConverterStrings()
+}
+class ConvertersForPair{
+ -{final} LinkedList<GenericConverter> converters = new LinkedList<>();
+ +  void add(GenericConverter converter)
+ + GenericConverter getConverter(TypeDescriptor sourceType, TypeDescriptor targetType)
+ + String toString()
+}
+
+class ConverterAdapter{
+  - Converter<Object, Object> converter
+  - ConvertiblePair typeInfo
+  - ResolvableType targetTyp
+  +  Set<ConvertiblePair> getConvertibleTypes()
+  + boolean matches(TypeDescriptor sourceType, TypeDescriptor targetType)
+  + Object convert(@Nullable Object source, TypeDescriptor sourceType, TypeDescriptor targetType)
+}
+class ConverterFactoryAdapter{
+  -{final} ConverterFactory<Object, Object> converterFactory
+  -{final} ConvertiblePair typeInfo
+  +Set<ConvertiblePair> getConvertibleTypes()
+  +matches(TypeDescriptor sourceType, TypeDescriptor targetType)
+  + convert(@Nullable Object source, TypeDescriptor sourceType, TypeDescriptor targetType)
+  +  String toString()
+}
+
+
+interface ConditionalGenericConverter
+
+interface Converter<S,T>{
+Set<ConvertiblePair> getConvertibleTypes();
+Object convert(@Nullable Object source, TypeDescriptor sourceType, TypeDescriptor targetType);
+
+}
+class ConvertiblePair{
+  -{final}Class<?> sourceType
+  -{final}Class<?> targetType
+  + Class<?> getSourceType()
+  + Class<?> getTargetType()
+  + boolean equals(@Nullable Object other)
+  + int hashCode()
+  + String toString()
+}
+interface ConditionalConverter{
+boolean matches(TypeDescriptor sourceType, TypeDescriptor targetType)
+}
+class CompositeConversionService{
+  -{final} List<ConversionService> delegates
+  + boolean canConvert(Class<?> sourceType, Class<?> targetType)
+  + boolean canConvert(TypeDescriptor sourceType, TypeDescriptor targetType)
+  +  <T> T convert(Object source, Class<T> targetType)
+  +  convert(Object source, TypeDescriptor sourceType,TypeDescriptor targetType)
+}
+class TypeConverterConversionService{
+  -SimpleTypeConverter createTypeConverter( Consumer<PropertyEditorRegistry> initializer)
+  + boolean canConvert(TypeDescriptor sourceType, TypeDescriptor targetType)
+}
+class TypeConverterConverter{
+    -{final} SimpleTypeConverter typeConverter
+     +Set<ConvertiblePair> getConvertibleTypes()
+     + boolean matches(TypeDescriptor sourceType, TypeDescriptor targetType)
+     Object convert(Object source, TypeDescriptor sourceType,TypeDescriptor targetType)
+     + PropertyEditor getPropertyEditor(Class<?> type)
+}
+class BindConverter{
+   -{static,final} Set<Class<?>> EXCLUDED_EDITORS
+   -{static} BindConverter sharedInstance
+   -{static} ConversionService conversionService
+   {static}BindConverter get(ConversionService conversionService,Consumer<PropertyEditorRegistry> propertyEditorInitializer)   -List<ConversionService> getConversionServices(ConversionService conversionService,Consumer<PropertyEditorRegistry> propertyEditorInitializer)
+   + canConvert(Object value, ResolvableType type,Annotation... annotations)
+   +  T convert(Object result, Bindable<T> target)
+   + <T> T convert(Object value, ResolvableType type, Annotation... annotations)
+
+}
+interface TypeConverter{
+   <T> T convertIfNecessary(@Nullable Object value, @Nullable Class<T> requiredType) throws TypeMismatchException
+   <T> T convertIfNecessary(@Nullable Object value, @Nullable Class<T> requiredType,@Nullable MethodParameter methodParam) throws TypeMismatchException
+   <T> T convertIfNecessary(@Nullable Object value, @Nullable Class<T> requiredType, @Nullable Field field)throws TypeMismatchException
+   <T> T convertIfNecessary(@Nullable Object value, @Nullable Class<T> requiredType,@Nullable TypeDescriptor typeDescriptor) throws TypeMismatchException
+
+}
+class SimpleTypeConverter
+note left: 只是设置类TypeConverterDelegate并将自己作为属性编辑器仓库 其他全部由TypeConverterSupport实现
+abstract class  TypeConverterSupport
+note left:只是实现类TypeConverter接口并且委托给TypeConverterDelegate
+Converters <..o ConvertersForPair
+Converters <..o Converter
+ConverterFactoryAdapter ..|>ConditionalGenericConverter
+ConverterAdapter ..|> ConditionalGenericConverter
+ConditionalGenericConverter --|>Converter
+ConditionalGenericConverter --|> ConditionalConverter
+ConverterAdapter <..o ResolvableType
+ConverterAdapter <..o ConvertiblePair
+ConverterAdapter <..o Converter
+GenericConversionService ..>ConverterCacheKey
+GenericConversionService ..> ConverterAdapter
+GenericConversionService ..>Converters
+GenericConversionService ..|>ConfigurableConversionService
+ConfigurableConversionService ..|> ConversionService
+ConfigurableConversionService ..|> ConverterRegistry
+CompositeConversionService ..>BindConverter
+CompositeConversionService ..>ResolvableTypeDescriptor
+CompositeConversionService --|>ConversionService
+TypeConverterConversionService --|> GenericConversionService
+GenericConversionService ..|> ConversionService
+TypeConverterConversionService ..>TypeConverterConverter
+TypeConverterConverter ..>SimpleTypeConverter
+TypeConverterConverter ..|> ConditionalGenericConverter
+SimpleTypeConverter --|>TypeConverterSupport
+TypeConverterSupport --|> PropertyEditorRegistrySupport
+TypeConverterSupport ..|>TypeConverter
+@enduml

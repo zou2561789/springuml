@@ -1,0 +1,25 @@
+@startuml
+
+class RootBeanDefinition{
+}
+abstract class AbstractBeanDefinition{
+}
+class BeanMetadataAttributeAccessor{
+}
+abstract class AttributeAccessorSupport{
+}
+interface BeanDefinition{
+}
+interface AttributeAccessor{
+}
+interface BeanMetadataElement{
+}
+RootBeanDefinition --|>AbstractBeanDefinition
+AbstractBeanDefinition --|>BeanMetadataAttributeAccessor
+AbstractBeanDefinition ..|>BeanDefinition
+BeanMetadataAttributeAccessor --|>AttributeAccessorSupport
+BeanMetadataAttributeAccessor ..|>BeanMetadataElement
+BeanDefinition --|>AttributeAccessor
+BeanDefinition --|>BeanMetadataElement
+AttributeAccessorSupport ..|>AttributeAccessorSupport
+@enduml
