@@ -1,18 +1,396 @@
 @startuml
 
 class RootBeanDefinition{
+   - BeanDefinitionHolder decoratedDefinition
+   - AnnotatedElement qualifiedElement
+   - boolean allowCaching
+   - boolean isFactoryMethodUnique
+     {volatile} ResolvableType targetTyp
+     {volatile} Class<?> resolvedTargetType
+     {volatile} ResolvableType factoryMethodReturnType
+     {volatile} Method factoryMethodToIntrospect;
+     {final} Object constructorArgumentLock
+     Executable resolvedConstructorOrFactoryMethod
+     boolean constructorArgumentsResolved
+     Object[] resolvedConstructorArguments
+     Object[] preparedConstructorArguments
+     {final} Object postProcessingLock
+     boolean postProcessed
+     {volatile} Boolean beforeInstantiationResolved
+   - Set<Member> externallyManagedConfigMembers
+   - Set<String> externallyManagedInitMethods
+   - Set<String> externallyManagedDestroyMethods
+   + String getParentName()
+   + void setDecoratedDefinition(@Nullable BeanDefinitionHolder decoratedDefinition)
+   + BeanDefinitionHolder getDecoratedDefinition()
+   + void setQualifiedElement(@Nullable AnnotatedElement qualifiedElement
+   + AnnotatedElement getQualifiedElement()
+   + void setTargetType(ResolvableType targetType)
+   + void setTargetType(@Nullable Class<?> targetType)
+   + Class<?> getTargetType()
+   + ResolvableType getResolvableType()
+   + Constructor<?>[] getPreferredConstructors()
+   + void setUniqueFactoryMethodName(String name)
+   + boolean isFactoryMethod(Method candidate)
+   + Method getResolvedFactoryMethod()
+   + void registerExternallyManagedConfigMember(Member configMember)
+   + boolean isExternallyManagedConfigMember(Member configMember)
+   + void registerExternallyManagedInitMethod(String initMethod)
+   + boolean isExternallyManagedInitMethod(String initMethod)
+   + void registerExternallyManagedDestroyMethod(String destroyMethod)
+   + boolean isExternallyManagedDestroyMethod(String destroyMethod)
+   + RootBeanDefinition cloneBeanDefinition()
+   + boolean equals(Object other)
+   + String toString()
+}
+class BeanDefinitionHolder{
+  -{final} BeanDefinition beanDefinition
+  -{final} String beanName
+  -{final} String[] aliases
+  + BeanDefinition getBeanDefinition()
+  + String getBeanName()
+  + String[] getAliases()
+  + Object getSource()
+  + boolean matchesName(@Nullable String candidateName)
+  + String getShortDescription()
+  + String getLongDescription()
+  + String toString()
+  boolean equals(Object other)
+}
+class GenericBeanDefinition{
+}
+class AnnotatedGenericBeanDefinition{
+}
+class ChildBeanDefinition{
+}
+class ScannedGenericBeanDefinition{
+}
+class BeanMetadataAttribute{
+    -{final} String name
+    -{final} Object value
+    - Object source
+    + String getName()
+    + Object getValue()
+    + void setSource(@Nullable Object source)
+    + Object getSource()
+    + boolean equals(Object other)
+    + int hashCode()
+    + String toString()
 }
 abstract class AbstractBeanDefinition{
+   +{static,final}  String SCOPE_DEFAULT
+   +{static,final}  int AUTOWIRE_NO
+   +{static,final}  int AUTOWIRE_BY_NAME
+   +{static,final}  int AUTOWIRE_BY_TYPE
+   +{static,final}  int AUTOWIRE_CONSTRUCTOR
+   +{static,final}  int AUTOWIRE_AUTODETECT
+   +{static,final}  int DEPENDENCY_CHECK_NONE
+   +{static,final]  int DEPENDENCY_CHECK_OBJECTS
+   +{static,final}  int DEPENDENCY_CHECK_SIMPLE
+   +{static,final}  int DEPENDENCY_CHECK_ALL
+   +{static,final}  String INFER_METHOD
+   -{volatile} Object beanClass
+   - String scope
+   - boolean abstractFlag
+   - boolean lazyInit
+   - int autowireMode
+   - int dependencyCheck
+   - String[] dependsOn
+   - boolean autowireCandidate
+   - boolean primary
+   - {final} Map<String, AutowireCandidateQualifier> qualifiers
+   - Supplier<?> instanceSupplier
+   - boolean nonPublicAccessAllowed
+   - boolean lenientConstructorResolution
+   - String factoryBeanName
+   - String factoryMethodName
+   - ConstructorArgumentValues constructorArgumentValues
+   - MutablePropertyValues propertyValues
+   - MethodOverrides methodOverrides
+   - String initMethodName
+   - String destroyMethodName
+   - boolean enforceInitMethod
+   - boolean enforceDestroyMethod
+   - boolean synthetic
+   - int role
+   - String description
+   - Resource resource
+     AbstractBeanDefinition(BeanDefinition original)
+   + void overrideFrom(BeanDefinition other)
+   + void applyDefaults(BeanDefinitionDefaults defaults)
+   + void setBeanClassName(@Nullable String beanClassName)
+   + String getBeanClassName()
+   + void setBeanClass(@Nullable Class<?> beanClass)
+   + Class<?> getBeanClass() throws IllegalStateException
+   + boolean hasBeanClass()
+   + Class<?> resolveBeanClass(@Nullable ClassLoader classLoader) throws ClassNotFoundException
+   + void setScope(@Nullable String scope)
+   + String getScope()
+   + boolean isSingleton()
+   + boolean isPrototype()
+   + void setAbstract(boolean abstractFlag)
+   + boolean isAbstract()
+   + void setLazyInit(boolean lazyInit)
+   + boolean isLazyInit()
+   + void setAutowireMode(int autowireMode)
+   + int getAutowireMode()
+   + int getResolvedAutowireMode()
+   + void setDependencyCheck(int dependencyCheck)
+   + int getDependencyCheck()
+   + void setDependsOn(@Nullable String... dependsOn)
+   + String[] getDependsOn()
+   + void setAutowireCandidate(boolean autowireCandidate)
+   + boolean isAutowireCandidate()
+   + void setPrimary(boolean primary)
+   + boolean isPrimary()
+   + void addQualifier(AutowireCandidateQualifier qualifier)
+   + boolean hasQualifier(String typeName)
+   + AutowireCandidateQualifier getQualifier(String typeName)
+   + Set<AutowireCandidateQualifier> getQualifiers()
+   + void copyQualifiersFrom(AbstractBeanDefinition source)
+   + void setInstanceSupplier(@Nullable Supplier<?> instanceSupplier)
+   + Supplier<?> getInstanceSupplier(
+   + void setNonPublicAccessAllowed(boolean nonPublicAccessAllowed)
+   + boolean isNonPublicAccessAllowed()
+   + void setLenientConstructorResolution(boolean lenientConstructorResolution)
+   + boolean isLenientConstructorResolution()
+   + void setFactoryBeanName(@Nullable String factoryBeanName)
+   + String getFactoryBeanName()
+   + void setFactoryMethodName(@Nullable String factoryMethodName)
+   + String getFactoryMethodName()
+   + void setConstructorArgumentValues(ConstructorArgumentValues constructorArgumentValues)
+   + ConstructorArgumentValues getConstructorArgumentValues()
+   + boolean hasConstructorArgumentValues()
+   + void setPropertyValues(MutablePropertyValues propertyValues)
+   + MutablePropertyValues getPropertyValues()
+   + boolean hasPropertyValues()
+   + void setMethodOverrides(MethodOverrides methodOverrides)
+   + MethodOverrides getMethodOverrides()
+   + boolean hasMethodOverrides()
+   + void setInitMethodName(@Nullable String initMethodName)
+   + String getInitMethodName()
+   + void setEnforceInitMethod(boolean enforceInitMethod)
+   + boolean isEnforceInitMethod()
+   + void setDestroyMethodName(@Nullable String destroyMethodName)
+   + String getDestroyMethodName()
+   + void setEnforceDestroyMethod(boolean enforceDestroyMethod)
+   + boolean isEnforceDestroyMethod()
+   + void setSynthetic(boolean synthetic)
+   + boolean isSynthetic()
+   + void setRole(int role)
+   + int getRole()
+   + void setDescription(@Nullable String description)
+   + String getDescription()
+   + void setResource(@Nullable Resource resource)
+   + Resource getResource()
+   + void setResourceDescription(@Nullable String resourceDescription)
+   + String getResourceDescription()
+   + void setOriginatingBeanDefinition(BeanDefinition originatingBd)
+   + BeanDefinition getOriginatingBeanDefinition()
+   + void validate() throws BeanDefinitionValidationException
+   + void prepareMethodOverrides() throws BeanDefinitionValidationException
+     void prepareMethodOverride(MethodOverride mo) throws BeanDefinitionValidationException
+   + Object clone()
+   + abstract   AbstractBeanDefinition cloneBeanDefinition()
+   + boolean equals(Object other)
+   + int hashCode()
+   + String toString()
+
 }
 class BeanMetadataAttributeAccessor{
+    - Object source
+    + void setSource(@Nullable Object source)
+    + Object getSource()
+    + void addMetadataAttribute(BeanMetadataAttribute attribute)
+    + BeanMetadataAttribute getMetadataAttribute(String name)
+    + void setAttribute(String name, @Nullable Object value)
+    + Object getAttribute(String name)
+    + Object removeAttribute(String name)
+}
+class AutowireCandidateQualifier{
+    +{static,final}  String VALUE_KEY
+    -{final} String typeName
+    + String getTypeName()
+}
+class ConstructorArgumentValues{
+  -{final} Map<Integer, ValueHolder> indexedArgumentValues
+  -{final} List<ValueHolder> genericArgumentValue
+  + void addArgumentValues(@Nullable ConstructorArgumentValues other)
+  + void addIndexedArgumentValue(int index, @Nullable Object value)
+  + void addIndexedArgumentValue(int index, @Nullable Object value, String type)
+  + void addIndexedArgumentValue(int index, ValueHolder newValue)
+  + void addOrMergeIndexedArgumentValue(Integer key, ValueHolder newValue)
+  + boolean hasIndexedArgumentValue(int index)
+  + ValueHolder getIndexedArgumentValue(int index, @Nullable Class<?> requiredType)
+  + ValueHolder getIndexedArgumentValue(int index, @Nullable Class<?> requiredType, @Nullable String requiredName)
+  + Map<Integer, ValueHolder> getIndexedArgumentValues()
+  + void addGenericArgumentValue(Object value)
+  + void addGenericArgumentValue(Object value, String type)
+  + void addGenericArgumentValue(ValueHolder newValue)
+  - void addOrMergeGenericArgumentValue(ValueHolder newValue)
+  + ValueHolder getGenericArgumentValue(Class<?> requiredType)
+  + ValueHolder getGenericArgumentValue(Class<?> requiredType, String requiredName)
+  + ValueHolder getGenericArgumentValue(@Nullable Class<?> requiredType, @Nullable String requiredName, @Nullable Set<ValueHolder> usedValueHolders)
+  + List<ValueHolder> getGenericArgumentValues()
+  + ValueHolder getArgumentValue(int index, Class<?> requiredType)
+  + ValueHolder getArgumentValue(int index, Class<?> requiredType, String requiredName)
+  + ValueHolder getArgumentValue(int index, @Nullable Class<?> requiredType, @Nullable String requiredName, @Nullable Set<ValueHolder> usedValueHolders)
+  + int getArgumentCount()
+  + boolean isEmpty()
+  + void clear()
+  + boolean equals(Object other)
+  + int hashCode()
+
+}
+class ValueHolder{
+    - Object value
+    - String type
+    - String name
+    - Object source
+    - boolean converted
+    - Object convertedValue
+    + void setValue(@Nullable Object value)
+    + Object getValue()
+    + void setType(@Nullable String type)
+    + String getType()
+    + void setName(@Nullable String name)
+    + String getName()
+    + void setSource(@Nullable Object source)
+    + Object getSource()
+    + synchronized boolean isConverted()
+    + synchronized void setConvertedValue(@Nullable Object value)
+    + synchronized Object getConvertedValue()
+    - boolean contentEquals(ValueHolder other)
+    - int contentHashCode()
+    + ValueHolder copy()
+}
+class MutablePropertyValues{
+   -{final} List<PropertyValue> propertyValueList
+   - Set<String> processedProperties
+   - {volatile} boolean converted
+   + List<PropertyValue> getPropertyValueList()
+   + int size()
+   + MutablePropertyValues addPropertyValues(@Nullable PropertyValues other)
+   + MutablePropertyValues addPropertyValues(@Nullable Map<?, ?> other)
+   + MutablePropertyValues addPropertyValue(PropertyValue pv)
+   + void addPropertyValue(String propertyName, Object propertyValue)
+   + MutablePropertyValues add(String propertyName, @Nullable Object propertyValue)
+   + void setPropertyValueAt(PropertyValue pv, int i)
+   + PropertyValue mergeIfRequired(PropertyValue newPv, PropertyValue currentPv)
+   + void removePropertyValue(PropertyValue pv)
+   + void removePropertyValue(String propertyName)
+   + Iterator<PropertyValue> iterator()
+   + Spliterator<PropertyValue> spliterator()
+   + Stream<PropertyValue> stream()
+   + PropertyValue[] getPropertyValues()
+   + PropertyValue getPropertyValue(String propertyName)
+   + Object get(String propertyName)
+   + PropertyValues changesSince(PropertyValues old)
+   + boolean contains(String propertyName)
+   + boolean isEmpty()
+   + void registerProcessedProperty(String propertyName)
+   + void clearProcessedProperty(String propertyName)
+   + void setConverted()
+   + boolean isConverted()
+   + boolean equals(Object other)
+   + int hashCode()
+   +  String toString()
+}
+class PropertyValue{
+  -{final} String name
+  -{final} Object value
+  - boolean optional
+  - boolean converted
+  - Object convertedValue
+  - {volatile} Boolean conversionNecessary
+  - {transient,volatile} Object resolvedTokens
+  + String getName()
+  + Object getValue()
+}
+class MethodOverrides{
+    -{final} Set<MethodOverride> overrides
+    -{volatile} boolean modified
+    + void addOverrides(@Nullable MethodOverrides other)
+    + void addOverride(MethodOverride override)
+    + Set<MethodOverride> getOverrides()
+    + boolean isEmpty()
+    + MethodOverride getOverride(Method method)
+    + boolean equals(Object other)
+    + int hashCode()
+}
+interface PropertyValues{
+   Iterator<PropertyValue> iterator()
+   Spliterator<PropertyValue> spliterator()
+   Stream<PropertyValue> stream()
+   PropertyValue[] getPropertyValues()
+   PropertyValue getPropertyValue(String propertyName)
+   PropertyValues changesSince(PropertyValues old)
+   boolean contains(String propertyName)
+   boolean isEmpty()
 }
 abstract class AttributeAccessorSupport{
+  -{final} Map<String, Object> attributes
+  + void setAttribute(String name, @Nullable Object value)
+  + Object getAttribute(String name)
+  + Object removeAttribute(String name)
+  + boolean hasAttribute(String name)
+  + String[] attributeNames()
+    void copyAttributesFrom(AttributeAccessor source)
+    boolean equals(Object other)
+    int hashCode()
 }
 interface BeanDefinition{
+   String SCOPE_SINGLETON
+   String SCOPE_PROTOTYPE
+   int ROLE_APPLICATION
+   int ROLE_SUPPORT
+   int ROLE_INFRASTRUCTURE
+   void setParentName(@Nullable String parentName)
+   String getParentName()
+   void setBeanClassName(@Nullable String beanClassName)
+   String getBeanClassName()
+   void setScope(@Nullable String scope)
+   String getScope()
+   void setLazyInit(boolean lazyInit)
+   boolean isLazyInit()
+   void setDependsOn(@Nullable String... dependsOn
+   String[] getDependsOn()
+   void setAutowireCandidate(boolean autowireCandidate)
+   boolean isAutowireCandidate()
+   void setPrimary(boolean primary)
+   boolean isPrimary()
+   void setFactoryBeanName(@Nullable String factoryBeanName)
+   String getFactoryBeanName()
+   void setFactoryMethodName(@Nullable String factoryMethodName)
+   String getFactoryMethodName()
+   ConstructorArgumentValues getConstructorArgumentValues()
+   boolean hasConstructorArgumentValues()
+   MutablePropertyValues getPropertyValues()
+   boolean hasPropertyValues()
+   void setInitMethodName(@Nullable String initMethodName)
+   String getInitMethodName()
+   void setDestroyMethodName(@Nullable String destroyMethodName)
+   String getDestroyMethodName()
+   void setRole(int role)
+   int getRole()
+   void setDescription(@Nullable String description)
+   String getDescription()
+   // Read-only attributes
+   boolean isSingleton()
+   boolean isPrototype()
+   boolean isAbstract()
+   String getResourceDescription()
+   BeanDefinition getOriginatingBeanDefinition()
 }
 interface AttributeAccessor{
+    void setAttribute(String name, @Nullable Object value)
+    Object getAttribute(String name)
+    Object removeAttribute(String name)
+    boolean hasAttribute(String name)
+    String[] attributeNames()
 }
 interface BeanMetadataElement{
+    Object getSource();
 }
 RootBeanDefinition --|>AbstractBeanDefinition
 AbstractBeanDefinition --|>BeanMetadataAttributeAccessor
@@ -21,5 +399,19 @@ BeanMetadataAttributeAccessor --|>AttributeAccessorSupport
 BeanMetadataAttributeAccessor ..|>BeanMetadataElement
 BeanDefinition --|>AttributeAccessor
 BeanDefinition --|>BeanMetadataElement
+GenericBeanDefinition --|>AbstractBeanDefinition
 AttributeAccessorSupport ..|>AttributeAccessorSupport
+AutowireCandidateQualifier --|>BeanMetadataAttributeAccessor
+BeanDefinitionHolder --|>BeanMetadataElement
+BeanMetadataAttributeAccessor <--o BeanMetadataAttribute
+AbstractBeanDefinition <..o AutowireCandidateQualifier
+AbstractBeanDefinition <..o ConstructorArgumentValues
+AbstractBeanDefinition <..o MutablePropertyValues
+AbstractBeanDefinition <..o MethodOverrides
+AbstractBeanDefinition <..o Resource
+ConstructorArgumentValues<--o ValueHolder
+MutablePropertyValues <--o PropertyValues
+MutablePropertyValues <--o PropertyValue
+RootBeanDefinition <--o BeanDefinitionHolder
+RootBeanDefinition <--o ResolvableType
 @enduml

@@ -71,6 +71,79 @@ abstract class FactoryBeanRegistrySupport{
     AccessControlContext getAccessControlContext()
 }
 abstract class AbstractAutowireCapableBeanFactory{
+    - InstantiationStrategy instantiationStrategy
+    - ParameterNameDiscoverer parameterNameDiscoverer
+    - boolean allowCircularReferences
+    - boolean allowRawInjectionDespiteWrapping
+    - {final} Set<Class<?>> ignoredDependencyTypes
+    - {final} Set<Class<?>> ignoredDependencyInterfaces
+    - {final} NamedThreadLocal<String> currentlyCreatedBean
+    - {final} ConcurrentMap<String, BeanWrapper> factoryBeanInstanceCache
+    - {final} ConcurrentMap<Class<?>, Method[]> factoryMethodCandidateCache
+    - {final} ConcurrentMap<Class<?>, PropertyDescriptor[]> filteredPropertyDescriptorsCache
+    + void setInstantiationStrategy(InstantiationStrategy instantiationStrategy)
+      InstantiationStrategy getInstantiationStrategy()
+    + void setParameterNameDiscoverer(@Nullable ParameterNameDiscoverer parameterNameDiscoverer)
+      ParameterNameDiscoverer getParameterNameDiscoverer()
+    + void setAllowCircularReferences(boolean allowCircularReferences)
+    + void setAllowRawInjectionDespiteWrapping(boolean allowRawInjectionDespiteWrapping)
+    + void ignoreDependencyType(Class<?> type)
+    + void ignoreDependencyInterface(Class<?> ifc)
+    + void copyConfigurationFrom(ConfigurableBeanFactory otherFactory)
+ 	// Typical methods for creating and populating external bean instances
+    +  <T> T createBean(Class<T> beanClass) throws BeansException
+    + void autowireBean(Object existingBean)
+    + Object configureBean(Object existingBean, String beanName) throws BeansException
+	// Specialized methods for fine-grained control over the bean lifecycle
+    + Object createBean(Class<?> beanClass, int autowireMode, boolean dependencyCheck) throws BeansException
+    + Object autowire(Class<?> beanClass, int autowireMode, boolean dependencyCheck) throws BeansException
+    + void autowireBeanProperties(Object existingBean, int autowireMode, boolean dependencyCheck) throws BeansException
+    + void applyBeanPropertyValues(Object existingBean, String beanName) throws BeansException
+    + Object initializeBean(Object existingBean, String beanName)
+    + Object applyBeanPostProcessorsBeforeInitialization(Object existingBean, String beanName) throws BeansException
+    + Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName) throws BeansException
+    + void destroyBean(Object existingBean)
+    // Delegate methods for resolving injection points
+    + Object resolveBeanByName(String name, DependencyDescriptor descriptor)
+    + Object resolveDependency(DependencyDescriptor descriptor, @Nullable String requestingBeanName) throws BeansException
+      Object createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args) throws BeanCreationException
+      Object doCreateBean(final String beanName, final RootBeanDefinition mbd, final @Nullable Object[] args) throws BeanCreationException
+      Class<?> predictBeanType(String beanName, RootBeanDefinition mbd, Class<?>... typesToMatch)
+      Class<?> determineTargetType(String beanName, RootBeanDefinition mbd, Class<?>... typesToMatch)
+      Class<?> getTypeForFactoryMethod(String beanName, RootBeanDefinition mbd, Class<?>... typesToMatch)
+      Class<?> getTypeForFactoryBean(String beanName, RootBeanDefinition mbd)
+    - Class<?> getTypeForFactoryBeanFromMethod(Class<?> beanClass, final String factoryMethodName)
+      Object getEarlyBeanReference(String beanName, RootBeanDefinition mbd, Object bean)
+    - FactoryBean<?> getSingletonFactoryBeanForTypeCheck(String beanName, RootBeanDefinition mbd)
+    - FactoryBean<?> getNonSingletonFactoryBeanForTypeCheck(String beanName, RootBeanDefinition mbd)
+      void applyMergedBeanDefinitionPostProcessors(RootBeanDefinition mbd, Class<?> beanType, String beanName)
+      Object resolveBeforeInstantiation(String beanName, RootBeanDefinition mbd)
+      Object applyBeanPostProcessorsBeforeInstantiation(Class<?> beanClass, String beanName)
+      BeanWrapper createBeanInstance(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)
+      BeanWrapper obtainFromSupplier(Supplier<?> instanceSupplier, String beanName)
+      Object getObjectForBeanInstance( Object beanInstance, String name, String beanName, @Nullable RootBeanDefinition mbd)
+      Constructor<?>[] determineConstructorsFromBeanPostProcessors(@Nullable Class<?> beanClass, String beanName) throws BeansException
+      BeanWrapper instantiateBean(final String beanName, final RootBeanDefinition mbd)
+      BeanWrapper instantiateUsingFactoryMethod( String beanName, RootBeanDefinition mbd, @Nullable Object[] explicitArgs)
+      BeanWrapper autowireConstructor( String beanName, RootBeanDefinition mbd, @Nullable Constructor<?>[] ctors, @Nullable Object[] explicitArgs)
+      populateBean(String beanName, RootBeanDefinition mbd, @Nullable BeanWrapper bw)
+      autowireByName( String beanName, AbstractBeanDefinition mbd, BeanWrapper bw, MutablePropertyValues pvs)
+      autowireByType( String beanName, AbstractBeanDefinition mbd, BeanWrapper bw, MutablePropertyValues pvs)
+      String[] unsatisfiedNonSimpleProperties(AbstractBeanDefinition mbd, BeanWrapper bw)
+      PropertyDescriptor[] filterPropertyDescriptorsForDependencyCheck(BeanWrapper bw, boolean cache)
+      PropertyDescriptor[] filterPropertyDescriptorsForDependencyCheck(BeanWrapper bw)
+      boolean isExcludedFromDependencyCheck(PropertyDescriptor pd)
+      void checkDependencies( String beanName, AbstractBeanDefinition mbd, PropertyDescriptor[] pds, @Nullable PropertyValues pvs) throws UnsatisfiedDependencyException
+      void applyPropertyValues(String beanName, BeanDefinition mbd, BeanWrapper bw, PropertyValues pvs)
+      convertForProperty( @Nullable Object value, String propertyName, BeanWrapper bw, TypeConverter converter)
+      Object initializeBean(final String beanName, final Object bean, @Nullable RootBeanDefinition mbd)
+    + void invokeAwareMethods(final String beanName, final Object bean)
+      void invokeInitMethods(String beanName, final Object bean, @Nullable RootBeanDefinition mbd) throws Throwable
+      void invokeCustomInitMethod(String beanName, final Object bean, RootBeanDefinition mbd) throws Throwable
+      Object postProcessObjectFromFactoryBean(Object object, String beanName)
+      void removeSingleton(String beanName)
+      void clearSingletonCache()
+
 }
 abstract class AbstractBeanFactory{
     - BeanFactory parentBeanFactory
@@ -308,4 +381,25 @@ AbstractBeanFactory <..o ClassLoader
 AbstractBeanFactory <..o InstantiationAwareBeanPostProcessor
 AbstractBeanFactory <..o DestructionAwareBeanPostProcessor
 AbstractBeanFactory <..o BeanWrapper
+AbstractAutowireCapableBeanFactory <..o InstantiationStrategy
+AbstractAutowireCapableBeanFactory <..o ParameterNameDiscoverer
+AbstractAutowireCapableBeanFactory <--o RootBeanDefinition
+AbstractAutowireCapableBeanFactory <--o BeanWrapper
+AbstractAutowireCapableBeanFactory <--o BeanPostProcessor
+AbstractAutowireCapableBeanFactory <..o DisposableBeanAdapter
+AbstractAutowireCapableBeanFactory <..o ConstructorResolver
+AbstractAutowireCapableBeanFactory <..o SmartInstantiationAwareBeanPostProcessor
+AbstractAutowireCapableBeanFactory <..o ClassUtils
+AbstractAutowireCapableBeanFactory <..o ConstructorArgumentValues
+AbstractAutowireCapableBeanFactory <..o ConstructorArgumentValues.ValueHolder
+AbstractAutowireCapableBeanFactory <..o ConstructorArgumentValues.AutowireUtils
+AbstractAutowireCapableBeanFactory <..o GenericTypeResolver
+AbstractAutowireCapableBeanFactory <..o ReflectionUtils
+AbstractAutowireCapableBeanFactory <..o MergedBeanDefinitionPostProcessor
+AbstractAutowireCapableBeanFactory <..o InstantiationAwareBeanPostProcessor
+AbstractAutowireCapableBeanFactory <..o PropertyDescriptor
+AbstractAutowireCapableBeanFactory <..o MutablePropertyValues
+AbstractAutowireCapableBeanFactory <..o TypeConverter
+AbstractAutowireCapableBeanFactory <..o PropertyAccessorUtils
+AbstractAutowireCapableBeanFactory <..o BeanUtils
 @enduml

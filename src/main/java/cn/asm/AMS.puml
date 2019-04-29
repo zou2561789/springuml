@@ -1,0 +1,22 @@
+@startuml
+
+class ParameterNameDiscoveringVisitor{
+    -{static,final}   String STATIC_CLASS_INIT
+    -{final} Class<?> clazz
+    -{final} Map<Member, String[]> memberMap
+    + MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions)
+    - {static} boolean isSyntheticOrBridged(int access)
+    - {static}  boolean isStatic(int access
+}
+abstract class ClassVisitor{
+}
+class LocalVariableTableVisitor{
+
+}
+abstract class MethodVisitor{
+}
+class ClassReader{
+}
+ParameterNameDiscoveringVisitor --|> ClassVisitor
+LocalVariableTableVisitor --|>MethodVisitor
+@enduml

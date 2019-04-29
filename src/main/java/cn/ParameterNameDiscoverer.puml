@@ -1,0 +1,35 @@
+@startuml
+class DefaultParameterNameDiscoverer{
+    + DefaultParameterNameDiscoverer()
+}
+class PrioritizedParameterNameDiscoverer{
+  +  void addDiscoverer(ParameterNameDiscoverer pnd)
+  +  String[] getParameterNames(Method method)
+  +  String[] getParameterNames(Constructor<?> ctor)
+}
+class StandardReflectionParameterNameDiscoverer{
+  + String[] getParameterNames(Method method)
+  + String[] getParameterNames(Constructor<?> ctor)
+  - String[] getParameterNames(Parameter[] parameters)
+
+}
+
+class LocalVariableTableParameterNameDiscoverer{
+    - {static,final} Map<Member, String[]> NO_DEBUG_INFO_MAP
+    - {final} Map<Class<?>, Map<Member, String[]>> parameterNamesCache
+    String[] getParameterNames(Method method)
+    String[] getParameterNames(Constructor<?> ctor
+    Map<Member, String[]> inspectClass(Class<?> clazz)
+}
+interface ParameterNameDiscoverer{
+  String[] getParameterNames(Method method)
+  String[] getParameterNames(Constructor<?> ctor)
+}
+PrioritizedParameterNameDiscoverer ..|>ParameterNameDiscoverer
+DefaultParameterNameDiscoverer --|>PrioritizedParameterNameDiscoverer
+DefaultParameterNameDiscoverer <--o StandardReflectionParameterNameDiscoverer
+DefaultParameterNameDiscoverer <--o LocalVariableTableParameterNameDiscoverer
+DefaultParameterNameDiscoverer <..o ClassReader
+DefaultParameterNameDiscoverer <..o ParameterNameDiscoveringVisitor
+
+@enduml
