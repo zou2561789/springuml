@@ -2,13 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2661f738-90fb-4168-bb17-ab449910567a" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/cn/ParameterNameDiscoverer.puml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/cn/asm/AMS.puml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/cn/strategy/InstantiationStrategy.puml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/cn/Bean.puml" afterPath="$PROJECT_DIR$/src/main/java/cn/Bean.puml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/cn/BeanFactory.puml" afterPath="$PROJECT_DIR$/src/main/java/cn/BeanFactory.puml" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -94,8 +89,8 @@
       <file leaf-file-name="Bean.puml" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/cn/Bean.puml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="325">
-              <caret line="45" column="26" lean-forward="false" selection-start-line="45" selection-start-column="6" selection-end-line="45" selection-end-column="26" />
+            <state relative-caret-position="419">
+              <caret line="403" column="26" lean-forward="false" selection-start-line="403" selection-start-column="26" selection-end-line="403" selection-end-column="26" />
               <folding />
             </state>
           </provider>
@@ -124,8 +119,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>Context</find>
-      <find>PlaceholdersResolver</find>
       <find>BeanBinder</find>
       <find>AggregateBinder</find>
       <find>DefaultResourceLoader</find>
@@ -154,6 +147,8 @@
       <find>ConversionService</find>
       <find>AbstractAutowireCapableBeanFactory</find>
       <find>ConstructorArgumentValues</find>
+      <find>ComponentDefinition</find>
+      <find>ScannedGenericBeanDefinition</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -779,7 +774,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="AndroidView" />
       <pane id="ProjectPane">
         <subPane>
@@ -827,8 +821,9 @@
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="Scratches" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -976,12 +971,13 @@
       <workItem from="1556090977853" duration="7871000" />
       <workItem from="1556107725119" duration="12096000" />
       <workItem from="1556371085345" duration="8912000" />
-      <workItem from="1556458939984" duration="5201000" />
+      <workItem from="1556458939984" duration="7800000" />
+      <workItem from="1557025206272" duration="6773000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="182458000" />
+    <option name="totallyTimeSpent" value="191830000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
@@ -1369,8 +1365,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/cn/Bean.puml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="325">
-          <caret line="45" column="26" lean-forward="false" selection-start-line="45" selection-start-column="6" selection-end-line="45" selection-end-column="26" />
+        <state relative-caret-position="419">
+          <caret line="403" column="26" lean-forward="false" selection-start-line="403" selection-start-column="26" selection-end-line="403" selection-end-column="26" />
           <folding />
         </state>
       </provider>

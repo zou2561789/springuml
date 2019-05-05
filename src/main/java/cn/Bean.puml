@@ -57,13 +57,45 @@ class BeanDefinitionHolder{
   + String toString()
   boolean equals(Object other)
 }
+class BeanComponentDefinition{
+    - BeanDefinition[] innerBeanDefinitions
+    - BeanReference[] beanReferences
+    + String getName()
+    + String getDescription()
+    + BeanDefinition[] getBeanDefinitions()
+    + BeanDefinition[] getInnerBeanDefinitions()
+    + BeanReference[] getBeanReferences()
+    + String toString()
+    + boolean equals(Object other)
+}
+
 class GenericBeanDefinition{
+     - String parentName
+     + void setParentName(String parentName)
+     + String getParentName()
+     + AbstractBeanDefinition cloneBeanDefinition()
+     + boolean equals(Object other)
+     + String toString()
 }
 class AnnotatedGenericBeanDefinition{
+     - {final}  AnnotationMetadata metadata
+     - MethodMetadata factoryMethodMetadata
+     + {final} AnnotationMetadata getMetadata()
+     + {final} MethodMetadata getFactoryMethodMetadata()
 }
 class ChildBeanDefinition{
+   - String parentName
+   + void setParentName(String parentName)
+   + void validate() throws BeanDefinitionValidationException
+   + AbstractBeanDefinition cloneBeanDefinition()
+   + boolean equals(Object other)
+   + int hashCode()
+   + String toString()
 }
 class ScannedGenericBeanDefinition{
+   - {final} AnnotationMetadata metadata
+   + {final} AnnotationMetadata getMetadata()
+   + MethodMetadata getFactoryMethodMetadata()
 }
 class BeanMetadataAttribute{
     -{final} String name
@@ -318,6 +350,68 @@ class MethodOverrides{
     + boolean equals(Object other)
     + int hashCode()
 }
+interface AnnotationMetadata{
+    Set<String> getAnnotationTypes()
+    Set<String> getMetaAnnotationTypes(String annotationName)
+    boolean hasAnnotation(String annotationName)
+    boolean hasMetaAnnotation(String metaAnnotationName)
+    boolean hasAnnotatedMethods(String annotationName)
+    Set<MethodMetadata> getAnnotatedMethods(String annotationName)
+}
+interface ClassMetadata{
+   String getClassName()
+   boolean isInterface()
+   boolean isAnnotation()
+   boolean isAbstract()
+   boolean isConcrete()
+   boolean isFinal()
+   boolean isIndependent()
+   boolean hasEnclosingClass()
+   String getEnclosingClassName()
+   boolean hasSuperClass()
+   String getSuperClassName()
+   String[] getInterfaceNames()
+   String[] getMemberClassNames()
+}
+interface AnnotatedTypeMetadata{
+   boolean isAnnotated(String annotationName)
+   Map<String, Object> getAnnotationAttributes(String annotationName)
+   Map<String, Object> getAnnotationAttributes(String annotationName, boolean classValuesAsString)
+   MultiValueMap<String, Object> getAllAnnotationAttributes(String annotationName)
+   MultiValueMap<String, Object> getAllAnnotationAttributes(String annotationName, boolean classValuesAsString
+}
+interface ComponentDefinition{
+    String getName()
+    String getDescription()
+    BeanDefinition[] getBeanDefinitions()
+    BeanDefinition[] getInnerBeanDefinitions()
+    BeanReference[] getBeanReferences()
+}
+interface BeanReference{
+   String getBeanName()
+}
+interface AnnotatedBeanDefinition{
+   AnnotationMetadata getMetadata()
+   MethodMetadata getFactoryMethodMetadata()
+}
+interface MethodMetadata{
+   String getMethodName()
+   String getDeclaringClassName()
+   String getReturnTypeName()
+   boolean isAbstract()
+   boolean isStatic()
+   boolean isFinal()
+   boolean isOverridable()
+}
+interface MultiValueMap<K,V>{
+  V getFirst(K key)
+  void add(K key, @Nullable V value)
+  void addAll(K key, List<? extends V> values)
+  void addAll(MultiValueMap<K, V> values)
+  void set(K key, @Nullable V value)
+  void setAll(Map<K, V> values)
+  Map<K, V> toSingleValueMap()
+}
 interface PropertyValues{
    Iterator<PropertyValue> iterator()
    Spliterator<PropertyValue> spliterator()
@@ -399,10 +493,22 @@ BeanMetadataAttributeAccessor --|>AttributeAccessorSupport
 BeanMetadataAttributeAccessor ..|>BeanMetadataElement
 BeanDefinition --|>AttributeAccessor
 BeanDefinition --|>BeanMetadataElement
+ScannedGenericBeanDefinition ..|>AnnotatedBeanDefinition
+ScannedGenericBeanDefinition --|>GenericBeanDefinition
+AnnotatedBeanDefinition --|>BeanDefinition
 GenericBeanDefinition --|>AbstractBeanDefinition
 AttributeAccessorSupport ..|>AttributeAccessorSupport
 AutowireCandidateQualifier --|>BeanMetadataAttributeAccessor
 BeanDefinitionHolder --|>BeanMetadataElement
+BeanComponentDefinition --|> BeanDefinitionHolder
+BeanComponentDefinition --|> ComponentDefinition
+BeanReference --|> BeanMetadataElement
+AnnotationMetadata --|>ClassMetadata
+AnnotationMetadata --|>AnnotatedTypeMetadata
+AnnotatedGenericBeanDefinition --|>GenericBeanDefinition
+AnnotatedGenericBeanDefinition ..|>AnnotatedBeanDefinition
+MethodMetadata --|>AnnotatedTypeMetadata
+MultiValueMap --|>Map
 BeanMetadataAttributeAccessor <--o BeanMetadataAttribute
 AbstractBeanDefinition <..o AutowireCandidateQualifier
 AbstractBeanDefinition <..o ConstructorArgumentValues
@@ -414,4 +520,11 @@ MutablePropertyValues <--o PropertyValues
 MutablePropertyValues <--o PropertyValue
 RootBeanDefinition <--o BeanDefinitionHolder
 RootBeanDefinition <--o ResolvableType
+ComponentDefinition <--o BeanDefinition
+ComponentDefinition <--o BeanReference
+ScannedGenericBeanDefinition <--o AnnotationMetadata
+AnnotatedTypeMetadata <..o MultiValueMap
+AnnotatedGenericBeanDefinition <--o AnnotationMetadata
+AnnotatedGenericBeanDefinition <--o MethodMetadata
+AnnotatedGenericBeanDefinition <--o StandardAnnotationMetadata
 @enduml
