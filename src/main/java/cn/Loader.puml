@@ -1,0 +1,11 @@
+@startuml
+class SpringFactoriesLoader{
+    + {static,final} String FACTORIES_RESOURCE_LOCATION
+    - {static,final} Map<ClassLoader, MultiValueMap<String, String>> cache
+    + {static} <T> List<T> loadFactories(Class<T> factoryClass, @Nullable ClassLoader classLoader)
+    + {static} List<String> loadFactoryNames(Class<?> factoryClass, @Nullable ClassLoader classLoader)
+    + {static} Map<String, List<String>> loadSpringFactories(@Nullable ClassLoader classLoader)
+    - {static} <T> T instantiateFactory(String instanceClassName, Class<T> factoryClass, ClassLoader classLoader)
+}
+SpringFactoriesLoader <..o ConcurrentReferenceHashMap
+@enduml

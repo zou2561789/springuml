@@ -392,12 +392,11 @@ AbstractAutowireCapableBeanFactory <..o SmartInstantiationAwareBeanPostProcessor
 AbstractAutowireCapableBeanFactory <..o ClassUtils
 AbstractAutowireCapableBeanFactory <..o ConstructorArgumentValues
 AbstractAutowireCapableBeanFactory <..o ConstructorArgumentValues.ValueHolder
-AbstractAutowireCapableBeanFactory <..o ConstructorArgumentValues.AutowireUtils
+AbstractAutowireCapableBeanFactory <..o AutowireUtils
 AbstractAutowireCapableBeanFactory <..o GenericTypeResolver
 AbstractAutowireCapableBeanFactory <..o ReflectionUtils
 AbstractAutowireCapableBeanFactory <..o MergedBeanDefinitionPostProcessor
 AbstractAutowireCapableBeanFactory <..o InstantiationAwareBeanPostProcessor
-AbstractAutowireCapableBeanFactory <..o PropertyDescriptor
 AbstractAutowireCapableBeanFactory <..o MutablePropertyValues
 AbstractAutowireCapableBeanFactory <..o TypeConverter
 AbstractAutowireCapableBeanFactory <..o PropertyAccessorUtils

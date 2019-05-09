@@ -2,8 +2,42 @@
 class PostProcessorRegistrationDelegate{
 }
 interface BeanPostProcessor{
-
+     Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException
+     Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException
+}
+interface DestructionAwareBeanPostProcessor{
+     void postProcessBeforeDestruction(Object bean, String beanName) throws BeansException
+      boolean requiresDestruction(Object bean)
+}
+class DisposableBeanAdapter{
+   - {static,final} String CLOSE_METHOD_NAME
+   - {static,final} String SHUTDOWN_METHOD_NAME
+   - {final} Object bean
+   - {final} String beanName
+   - {final} boolean invokeDisposableBean
+   - {final} boolean nonPublicAccessAllowed
+   - {final} AccessControlContext acc
+   - String destroyMethodName
+   - {transient} Method destroyMethod
+   - List<DestructionAwareBeanPostProcessor> beanPostProcessors
+   - inferDestroyMethodIfNecessary(Object bean, RootBeanDefinition beanDefinition)
+   - List<DestructionAwareBeanPostProcessor> filterPostProcessors(List<BeanPostProcessor> processors, Object bean
+   + void run()
+   + void destroy()
+   - Method determineDestroyMethod(String name)
+   - Method findDestroyMethod(String name)
+   - void invokeCustomDestroyMethod(final Method destroyMethod)
+     Object writeReplace()
+   + {static} boolean hasDestroyMethod(Object bean, RootBeanDefinition beanDefinition)
+   + {static} boolean hasApplicableProcessors(Object bean, List<BeanPostProcessor> postProcessors)
+}
+interface DisposableBean{
+    void destroy() throws Exception
 }
 
+DisposableBeanAdapter ..|>DisposableBean
+DisposableBeanAdapter ..|>Runnable
+DisposableBeanAdapter <..o BeanUtils
+DisposableBeanAdapter <..o DestructionAwareBeanPostProcessor
 
 @enduml

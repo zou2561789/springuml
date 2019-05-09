@@ -265,6 +265,7 @@ class AnnotatedElementAdapter{
   + int hashCode()
   + String toString()
 }
+
 interface AnnotatedElement;
 interface Annotation;
 interface VariableResolver

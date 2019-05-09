@@ -2,8 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2661f738-90fb-4168-bb17-ab449910567a" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/cn/Loader.puml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/cn/Utils.puml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/cn/Bean.puml" afterPath="$PROJECT_DIR$/src/main/java/cn/Bean.puml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/cn/BeanFactory.puml" afterPath="$PROJECT_DIR$/src/main/java/cn/BeanFactory.puml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/cn/BeanPostProcessor.puml" afterPath="$PROJECT_DIR$/src/main/java/cn/BeanPostProcessor.puml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/cn/ConvertService.puml" afterPath="$PROJECT_DIR$/src/main/java/cn/ConvertService.puml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/cn/Resolver.puml" afterPath="$PROJECT_DIR$/src/main/java/cn/Resolver.puml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/cn/ResulvableType.puml" afterPath="$PROJECT_DIR$/src/main/java/cn/ResulvableType.puml" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -16,31 +23,51 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="BeanFactory.puml" pinned="false" current-in-tab="false">
+      <file leaf-file-name="BeanFactory.puml" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/cn/BeanFactory.puml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="7315">
-              <caret line="385" column="58" lean-forward="false" selection-start-line="385" selection-start-column="40" selection-end-line="385" selection-end-column="58" />
+            <state relative-caret-position="348">
+              <caret line="394" column="34" lean-forward="false" selection-start-line="394" selection-start-column="0" selection-end-line="394" selection-end-column="34" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ParameterNameDiscoverer.puml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/cn/ParameterNameDiscoverer.puml">
+      <file leaf-file-name="ConvertService.puml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/cn/ConvertService.puml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="608">
-              <caret line="32" column="67" lean-forward="false" selection-start-line="32" selection-start-column="67" selection-end-line="32" selection-end-column="67" />
+            <state relative-caret-position="481">
+              <caret line="352" column="53" lean-forward="false" selection-start-line="352" selection-start-column="32" selection-end-line="352" selection-end-column="53" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PostProcess.puml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/cn/PostProcess.puml">
+      <file leaf-file-name="Loader.puml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/cn/Loader.puml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="38">
-              <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+            <state relative-caret-position="171">
+              <caret line="9" column="53" lean-forward="false" selection-start-line="9" selection-start-column="27" selection-end-line="9" selection-end-column="53" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ResulvableType.puml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/cn/ResulvableType.puml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="5073">
+              <caret line="267" column="0" lean-forward="false" selection-start-line="267" selection-start-column="0" selection-end-line="267" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BeanPostProcessor.puml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/cn/BeanPostProcessor.puml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="171">
+              <caret line="9" column="46" lean-forward="false" selection-start-line="9" selection-start-column="46" selection-end-line="9" selection-end-column="46" />
               <folding />
             </state>
           </provider>
@@ -56,40 +83,20 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="InstantiationStrategy.puml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/cn/strategy/InstantiationStrategy.puml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="380">
-              <caret line="20" column="95" lean-forward="false" selection-start-line="20" selection-start-column="95" selection-end-line="20" selection-end-column="95" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SpringPropertyEditor.puml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/cn/SpringPropertyEditor.puml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="114">
-              <caret line="6" column="105" lean-forward="false" selection-start-line="6" selection-start-column="105" selection-end-line="6" selection-end-column="105" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="ApplicationContext.puml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/cn/ApplicationContext.puml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5814">
-              <caret line="306" column="49" lean-forward="false" selection-start-line="306" selection-start-column="32" selection-end-line="306" selection-end-column="49" />
+            <state relative-caret-position="4921">
+              <caret line="259" column="29" lean-forward="false" selection-start-line="259" selection-start-column="29" selection-end-line="259" selection-end-column="29" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Bean.puml" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Bean.puml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/cn/Bean.puml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="419">
+            <state relative-caret-position="7657">
               <caret line="403" column="26" lean-forward="false" selection-start-line="403" selection-start-column="26" selection-end-line="403" selection-end-column="26" />
               <folding />
             </state>
@@ -99,8 +106,18 @@
       <file leaf-file-name="Resolver.puml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/cn/Resolver.puml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="912">
-              <caret line="48" column="74" lean-forward="false" selection-start-line="48" selection-start-column="74" selection-end-line="48" selection-end-column="74" />
+            <state relative-caret-position="1900">
+              <caret line="100" column="48" lean-forward="false" selection-start-line="100" selection-start-column="48" selection-end-line="100" selection-end-column="48" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Utils.puml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/cn/Utils.puml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="519">
+              <caret line="139" column="0" lean-forward="false" selection-start-line="139" selection-start-column="0" selection-end-line="139" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -119,7 +136,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>BeanBinder</find>
       <find>AggregateBinder</find>
       <find>DefaultResourceLoader</find>
       <find>ResourceLoader</find>
@@ -149,6 +165,7 @@
       <find>ConstructorArgumentValues</find>
       <find>ComponentDefinition</find>
       <find>ScannedGenericBeanDefinition</find>
+      <find>ClassMetadata</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -162,29 +179,31 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/main/java/cn/ResulvableType.puml" />
         <option value="$PROJECT_DIR$/src/main/java/cn/TypeConverterDelegate.puml" />
         <option value="$PROJECT_DIR$/src/main/java/cn/EnvironmentPostProcessor.puml" />
         <option value="$PROJECT_DIR$/src/main/java/cn/Resource.puml" />
         <option value="$PROJECT_DIR$/src/main/java/cn/Scope.puml" />
         <option value="$PROJECT_DIR$/src/main/java/cn/BeanDefinition.puml" />
         <option value="$PROJECT_DIR$/src/main/java/cn/Environment.puml" />
-        <option value="$PROJECT_DIR$/src/main/java/cn/BeanPostProcessor.puml" />
         <option value="$PROJECT_DIR$/src/main/java/cn/LifecycleProcessor.puml" />
         <option value="$PROJECT_DIR$/src/main/java/cn/Event.puml" />
         <option value="$PROJECT_DIR$/src/main/java/cn/MessageSource.puml" />
         <option value="$PROJECT_DIR$/src/main/java/cn/ApplicationContext.puml" />
         <option value="$PROJECT_DIR$/src/main/java/cn/PostProcess.puml" />
         <option value="$PROJECT_DIR$/src/main/java/cn/PropertySource.puml" />
-        <option value="$PROJECT_DIR$/src/main/java/cn/ConvertService.puml" />
         <option value="$PROJECT_DIR$/src/main/java/cn/Binder.puml" />
-        <option value="$PROJECT_DIR$/src/main/java/cn/Resolver.puml" />
         <option value="$PROJECT_DIR$/src/main/java/cn/SpringPropertyEditor.puml" />
-        <option value="$PROJECT_DIR$/src/main/java/cn/BeanFactory.puml" />
         <option value="$PROJECT_DIR$/src/main/java/cn/strategy/InstantiationStrategy.puml" />
         <option value="$PROJECT_DIR$/src/main/java/cn/ParameterNameDiscoverer.puml" />
         <option value="$PROJECT_DIR$/src/main/java/cn/asm/AMS.puml" />
         <option value="$PROJECT_DIR$/src/main/java/cn/Bean.puml" />
+        <option value="$PROJECT_DIR$/src/main/java/cn/BeanPostProcessor.puml" />
+        <option value="$PROJECT_DIR$/src/main/java/cn/Resolver.puml" />
+        <option value="$PROJECT_DIR$/src/main/java/cn/ResulvableType.puml" />
+        <option value="$PROJECT_DIR$/src/main/java/cn/ConvertService.puml" />
+        <option value="$PROJECT_DIR$/src/main/java/cn/Loader.puml" />
+        <option value="$PROJECT_DIR$/src/main/java/cn/Utils.puml" />
+        <option value="$PROJECT_DIR$/src/main/java/cn/BeanFactory.puml" />
       </list>
     </option>
   </component>
@@ -774,7 +793,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="AndroidView" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -808,22 +827,13 @@
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="cn" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="springuml" type="b2602c69:ProjectViewProjectNode" />
-              <item name="springuml" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="cn" type="462c0819:PsiDirectoryNode" />
-              <item name="asm" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
       <pane id="Scratches" />
-      <pane id="PackagesPane" />
+      <pane id="Scope" />
+      <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -834,6 +844,7 @@
     <property name="nodejs_interpreter_path" value="/usr/local/bin/node" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
+    <property name="SearchEverywhereHistoryKey" value="BeanF&#9;FILE&#9;file:///Users/zoujing/project/springuml/src/main/java/cn/BeanFactory.puml" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -972,12 +983,15 @@
       <workItem from="1556107725119" duration="12096000" />
       <workItem from="1556371085345" duration="8912000" />
       <workItem from="1556458939984" duration="7800000" />
-      <workItem from="1557025206272" duration="6773000" />
+      <workItem from="1557025206272" duration="10617000" />
+      <workItem from="1557207670186" duration="9676000" />
+      <workItem from="1557280832007" duration="9882000" />
+      <workItem from="1557380369837" duration="5580000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="191830000" />
+    <option name="totallyTimeSpent" value="220812000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
@@ -1029,20 +1043,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/cn/Resource.puml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="570">
-          <caret line="30" column="9" lean-forward="false" selection-start-line="30" selection-start-column="9" selection-end-line="30" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="152">
-          <caret line="8" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/cn/spring.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="38">
@@ -1248,13 +1248,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/cn/BeanPostProcessor.puml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="76">
-          <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/cn/PostProcess.java" />
     <entry file="file://$PROJECT_DIR$/src/main/java/cn/Resource.puml">
       <provider selected="true" editor-type-id="text-editor">
@@ -1277,13 +1270,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/cn/ConvertService.puml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3230">
-          <caret line="170" column="38" lean-forward="false" selection-start-line="170" selection-start-column="38" selection-end-line="170" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/cn/Scope.puml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="38">
@@ -1291,34 +1277,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/cn/ResulvableType.puml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="422">
-          <caret line="246" column="21" lean-forward="false" selection-start-line="246" selection-start-column="21" selection-end-line="246" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/cn/Resolver.puml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="912">
-          <caret line="48" column="74" lean-forward="false" selection-start-line="48" selection-start-column="74" selection-end-line="48" selection-end-column="74" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/cn/SpringPropertyEditor.puml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="114">
           <caret line="6" column="105" lean-forward="false" selection-start-line="6" selection-start-column="105" selection-end-line="6" selection-end-column="105" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/cn/ApplicationContext.puml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5814">
-          <caret line="306" column="49" lean-forward="false" selection-start-line="306" selection-start-column="32" selection-end-line="306" selection-end-column="49" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1326,24 +1288,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="380">
           <caret line="20" column="95" lean-forward="false" selection-start-line="20" selection-start-column="95" selection-end-line="20" selection-end-column="95" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/cn/asm/ASM.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/cn/asm/AMS.puml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="17" column="17" lean-forward="false" selection-start-line="17" selection-start-column="6" selection-end-line="17" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/cn/ParameterNameDiscoverer.puml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="608">
           <caret line="32" column="67" lean-forward="false" selection-start-line="32" selection-start-column="67" selection-end-line="32" selection-end-column="67" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1355,18 +1307,82 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/cn/BeanFactory.puml">
+    <entry file="file://$PROJECT_DIR$/src/main/java/cn/BeanPostProcessor.puml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7315">
-          <caret line="385" column="58" lean-forward="false" selection-start-line="385" selection-start-column="40" selection-end-line="385" selection-end-column="58" />
+        <state relative-caret-position="171">
+          <caret line="9" column="46" lean-forward="false" selection-start-line="9" selection-start-column="46" selection-end-line="9" selection-end-column="46" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cn/asm/AMS.puml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="17" column="17" lean-forward="false" selection-start-line="17" selection-start-column="6" selection-end-line="17" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cn/Resolver.puml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1900">
+          <caret line="100" column="48" lean-forward="false" selection-start-line="100" selection-start-column="48" selection-end-line="100" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cn/ApplicationContext.puml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4921">
+          <caret line="259" column="29" lean-forward="false" selection-start-line="259" selection-start-column="29" selection-end-line="259" selection-end-column="29" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/cn/Bean.puml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="419">
+        <state relative-caret-position="7657">
           <caret line="403" column="26" lean-forward="false" selection-start-line="403" selection-start-column="26" selection-end-line="403" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cn/ResulvableType.puml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5073">
+          <caret line="267" column="0" lean-forward="false" selection-start-line="267" selection-start-column="0" selection-end-line="267" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cn/ConvertService.puml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="481">
+          <caret line="352" column="53" lean-forward="false" selection-start-line="352" selection-start-column="32" selection-end-line="352" selection-end-column="53" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cn/Loader.puml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="9" column="53" lean-forward="false" selection-start-line="9" selection-start-column="27" selection-end-line="9" selection-end-column="53" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cn/Utils.puml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="519">
+          <caret line="139" column="0" lean-forward="false" selection-start-line="139" selection-start-column="0" selection-end-line="139" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cn/BeanFactory.puml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="348">
+          <caret line="394" column="34" lean-forward="false" selection-start-line="394" selection-start-column="0" selection-end-line="394" selection-end-column="34" />
           <folding />
         </state>
       </provider>

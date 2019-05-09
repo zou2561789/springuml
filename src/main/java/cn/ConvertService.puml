@@ -143,6 +143,168 @@ class SimpleTypeConverter
 note left: 只是设置类TypeConverterDelegate并将自己作为属性编辑器仓库 其他全部由TypeConverterSupport实现
 abstract class  TypeConverterSupport
 note left:只是实现类TypeConverter接口并且委托给TypeConverterDelegate
+
+class BeanWrapperImpl{
+    - CachedIntrospectionResults cachedIntrospectionResults
+    - AccessControlContext acc
+    + void setBeanInstance(Object object)
+    + void setWrappedInstance(Object object, @Nullable String nestedPath, @Nullable Object rootObject)
+    + void setIntrospectionClass(Class<?> clazz)
+    + CachedIntrospectionResults getCachedIntrospectionResults()
+    + void setSecurityContext(@Nullable AccessControlContext acc)
+    + AccessControlContext getSecurityContext()
+    + Object convertForProperty(@Nullable Object value, String propertyName) throws TypeMismatchException
+    - Property property(PropertyDescriptor pd)
+      BeanPropertyHandler getLocalPropertyHandler(String propertyName)
+    + BeanWrapperImpl newNestedPropertyAccessor(Object object, String nestedPath)
+    + NotWritablePropertyException createNotWritablePropertyException(String propertyName)
+    + PropertyDescriptor[] getPropertyDescriptors()
+    + PropertyDescriptor getPropertyDescriptor(String propertyName) throws InvalidPropertyException
+}
+class BeanPropertyHandler{
+    -{final} PropertyDescriptor pd
+    + ResolvableType getResolvableType()
+    + TypeDescriptor toTypeDescriptor()
+    + TypeDescriptor nested(int level)
+    + Object getValue() throws Exception
+    + void setValue(final @Nullable Object value) throws Exception
+}
+class CachedIntrospectionResults{
+    + {static,final} String IGNORE_BEANINFO_PROPERTY_NAME
+    + {static,final} boolean shouldIntrospectorIgnoreBeaninfoClasses
+    + {static,final} List<BeanInfoFactory> beanInfoFactories
+      {static,final} acceptedClassLoaders
+      {static,final} ConcurrentMap<Class<?>, CachedIntrospectionResults> strongClassCache
+      {static,final} ConcurrentMap<Class<?>, CachedIntrospectionResults> softClassCache
+    + {static}  void acceptClassLoader(@Nullable ClassLoader classLoader)
+    + {static}  void clearClassLoader(@Nullable ClassLoader classLoader)
+      {static}  CachedIntrospectionResults forClass(Class<?> beanClass) throws BeansException
+    - {static}  boolean isClassLoaderAccepted(ClassLoader classLoader)
+    - {static}  boolean isUnderneathClassLoader(@Nullable ClassLoader candidate, @Nullable ClassLoader parent)
+    - {static}  BeanInfo getBeanInfo(Class<?> beanClass) throws IntrospectionException
+    - {final}   BeanInfo beanInfo
+    - {final}   Map<String, PropertyDescriptor> propertyDescriptorCache
+    - {final}   ConcurrentMap<PropertyDescriptor, TypeDescriptor> typeDescriptorCache
+    - void introspectInterfaces(Class<?> beanClass, Class<?> currClass) throws IntrospectionException
+      BeanInfo getBeanInfo()
+      Class<?> getBeanClass()
+      PropertyDescriptor getPropertyDescriptor(String name)
+      PropertyDescriptor[] getPropertyDescriptors()
+      PropertyDescriptor buildGenericTypeAwarePropertyDescriptor(Class<?> beanClass, PropertyDescriptor pd)
+      TypeDescriptor addTypeDescriptor(PropertyDescriptor pd, TypeDescriptor td)
+      TypeDescriptor getTypeDescriptor(PropertyDescriptor pd)
+}
+abstract class AbstractNestablePropertyAccessor{
+   - int autoGrowCollectionLimit
+     Object wrappedObject
+   - String nestedPath
+   - Map<String, AbstractNestablePropertyAccessor> nestedPropertyAccessors
+   + void setAutoGrowCollectionLimit(int autoGrowCollectionLimit)
+   + int getAutoGrowCollectionLimit()
+   + void setWrappedInstance(Object object)
+   + void setWrappedInstance(Object object, @Nullable String nestedPath, @Nullable Object rootObject)
+   + {final} Object getWrappedInstance()
+   + {final} Class<?> getWrappedClass()
+   + {final} String getNestedPath()
+   + {final} Object getRootInstance()
+   + {final} Class<?> getRootClass()
+   + void setPropertyValue(String propertyName, @Nullable Object value) throws BeansException
+   + void setPropertyValue(PropertyValue pv) throws BeansException
+   - setPropertyValue(PropertyTokenHolder tokens, PropertyValue pv) throws BeansException
+   - void processKeyedProperty(PropertyTokenHolder tokens, PropertyValue pv)
+   - Object getPropertyHoldingValue(PropertyTokenHolder tokens)
+   - void processLocalProperty(PropertyTokenHolder tokens, PropertyValue pv)
+   + Class<?> getPropertyType(String propertyName) throws BeansException
+   + TypeDescriptor getPropertyTypeDescriptor(String propertyName) throws BeansException
+   + boolean isReadableProperty(String propertyName)
+   + boolean isWritableProperty(String propertyName)
+   - Object convertIfNecessary(@Nullable String propertyName, @Nullable Object oldValue,@Nullable Object newValue, @Nullable Class<?> requiredType, @Nullable TypeDescriptor td) throws TypeMismatchException
+     Object convertForProperty(String propertyName, @Nullable Object oldValue, @Nullable Object newValue, TypeDescriptor td) throws TypeMismatchException
+   + Object getPropertyValue(String propertyName) throws BeansException
+     Object getPropertyValue(PropertyTokenHolder tokens) throws BeansException
+     PropertyHandler getPropertyHandler(String propertyName) throws BeansException
+     abstract PropertyHandler getLocalPropertyHandler(String propertyName)
+     abstract AbstractNestablePropertyAccessor newNestedPropertyAccessor(Object object, String nestedPath)
+     abstract NotWritablePropertyException createNotWritablePropertyException(String propertyName)
+   - Object growArrayIfNecessary(Object array, int index, String name)
+   - void growCollectionIfNecessary(Collection<Object> collection, int index, String name, PropertyHandler ph, int nestingLevel)
+     String getFinalPath(AbstractNestablePropertyAccessor pa, String nestedPath)
+     AbstractNestablePropertyAccessor getPropertyAccessorForPropertyPath(String propertyPath)
+   - AbstractNestablePropertyAccessor getNestedPropertyAccessor(String nestedProperty)
+   - Object setDefaultValue(PropertyTokenHolder tokens)
+   - PropertyValue createDefaultPropertyValue(PropertyTokenHolder tokens)
+   - Object newValue(Class<?> type, @Nullable TypeDescriptor desc, String name)
+   - PropertyTokenHolder getPropertyNameTokens(String propertyName)
+   + String toString()
+}
+abstract class PropertyHandler{
+    - {final} Class<?> propertyType
+    - {final} boolean readable
+    - {final} boolean writable
+    + Class<?> getPropertyType()
+    + boolean isReadable()
+    + boolean isWritable()
+    - abstract TypeDescriptor toTypeDescriptor()
+    - abstract ResolvableType getResolvableType()
+    + Class<?> getMapKeyType(int nestingLevel)
+    + Class<?> getMapValueType(int nestingLevel)
+    + Class<?> getCollectionType(int nestingLevel)
+    + abstract TypeDescriptor nested(int level)
+    + abstract Object getValue() throws Exception
+    + abstract void setValue(@Nullable Object value) throws Exception
+}
+abstract class AbstractPropertyAccessor{
+    - boolean extractOldValueForEditor
+    - boolean autoGrowNestedPaths
+    + void setExtractOldValueForEditor(boolean extractOldValueForEditor)
+    + boolean isExtractOldValueForEditor()
+    + void setAutoGrowNestedPaths(boolean autoGrowNestedPaths)
+    + boolean isAutoGrowNestedPaths()
+    + void setPropertyValue(PropertyValue pv) throws BeansException
+    + void setPropertyValues(Map<?, ?> map) throws BeansException
+    + void setPropertyValues(PropertyValues pvs) throws BeansException
+    + void setPropertyValues(PropertyValues pvs, boolean ignoreUnknown) throws BeansException
+    + void setPropertyValues(PropertyValues pvs, boolean ignoreUnknown, boolean ignoreInvalid) throws BeansException
+    + Class<?> getPropertyType(String propertyPath)
+    + {abstract} Object getPropertyValue(String propertyName) throws BeansException
+    + {abstract} void setPropertyValue(String propertyName, @Nullable Object value) throws BeansException
+}
+interface BeanWrapper{
+    void setAutoGrowCollectionLimit(int autoGrowCollectionLimit)
+    int getAutoGrowCollectionLimit()
+    Object getWrappedInstance()
+    Class<?> getWrappedClass()
+    PropertyDescriptor[] getPropertyDescriptors()
+    PropertyDescriptor getPropertyDescriptor(String propertyName) throws InvalidPropertyException
+}
+interface ConfigurablePropertyAccessor{
+   void setConversionService(@Nullable ConversionService conversionService)
+   ConversionService getConversionService()
+   void setExtractOldValueForEditor(boolean extractOldValueForEditor)
+   boolean isExtractOldValueForEditor()
+   void setAutoGrowNestedPaths(boolean autoGrowNestedPaths)
+   boolean isAutoGrowNestedPaths()
+}
+interface PropertyAccessor{
+   String NESTED_PROPERTY_SEPARATOR
+   char NESTED_PROPERTY_SEPARATOR_CHAR
+   String PROPERTY_KEY_PREFIX
+   char PROPERTY_KEY_PREFIX_CHAR
+   String PROPERTY_KEY_SUFFIX
+   char PROPERTY_KEY_SUFFIX_CHAR
+   boolean isReadableProperty(String propertyName)
+   boolean isWritableProperty(String propertyName)
+   Class<?> getPropertyType(String propertyName) throws BeansException
+   TypeDescriptor getPropertyTypeDescriptor(String propertyName) throws BeansException
+   Object getPropertyValue(String propertyName) throws BeansException
+   void setPropertyValue(String propertyName, @Nullable Object value) throws BeansException
+   void setPropertyValue(PropertyValue pv) throws BeansException
+   void setPropertyValues(Map<?, ?> map) throws BeansException
+   void setPropertyValues(PropertyValues pvs) throws BeansException
+   void setPropertyValues(PropertyValues pvs, boolean ignoreUnknown) throws BeansException
+   void setPropertyValues(PropertyValues pvs, boolean ignoreUnknown, boolean ignoreInvalid) throws BeansException
+}
+
 Converters <..o ConvertersForPair
 Converters <..o Converter
 ConverterFactoryAdapter ..|>ConditionalGenericConverter
@@ -169,4 +331,25 @@ TypeConverterConverter ..|> ConditionalGenericConverter
 SimpleTypeConverter --|>TypeConverterSupport
 TypeConverterSupport --|> PropertyEditorRegistrySupport
 TypeConverterSupport ..|>TypeConverter
+BeanWrapperImpl --|>AbstractNestablePropertyAccessor
+BeanWrapperImpl ..|>BeanWrapper
+AbstractNestablePropertyAccessor --|>AbstractPropertyAccessor
+AbstractPropertyAccessor --|>TypeConverterSupport
+AbstractPropertyAccessor ..|>ConfigurablePropertyAccessor
+BeanWrapper --|>ConfigurablePropertyAccessor
+ConfigurablePropertyAccessor --|>PropertyAccessor
+ConfigurablePropertyAccessor --|>PropertyEditorRegistry
+ConfigurablePropertyAccessor --|>TypeConverter
+AbstractNestablePropertyAccessor <..o AbstractNestablePropertyAccessor
+AbstractNestablePropertyAccessor <..o TypeConverterDelegate
+AbstractNestablePropertyAccessor <..o PropertyTokenHolder
+AbstractNestablePropertyAccessor <..o PropertyValue
+AbstractNestablePropertyAccessor <..o PropertyTokenHolder
+AbstractNestablePropertyAccessor <..o PropertyAccessorUtils
+CachedIntrospectionResults <..o CachedIntrospectionResults
+CachedIntrospectionResults <..o PropertyDescriptor
+CachedIntrospectionResults <..o BeanPropertyHandler
+CachedIntrospectionResults <..o ClassUtils
+CachedIntrospectionResults <..o SpringFactoriesLoader
+
 @enduml

@@ -1,0 +1,142 @@
+@startuml
+abstract class ReflectionUtils{
+   + {static,final}   MethodFilter NON_BRIDGED_METHODS
+   + {static,final}   MethodFilter USER_DECLARED_METHODS
+   + {static,final}   FieldFilter COPYABLE_FIELDS
+   - {static,final}   String CGLIB_RENAMED_METHOD_PREFIX
+   - {static,final}   Method[] NO_METHODS
+   - {static,final}   Field[] NO_FIELDS
+   - {static,final}   Map<Class<?>, Method[]> declaredMethodsCache
+   - {static,final}   Map<Class<?>, Field[]> declaredFieldsCache
+   + {static}  Field findField(Class<?> clazz, String name)
+   + Field findField(Class<?> clazz, @Nullable String name, @Nullable Class<?> type)
+   + void setField(Field field, @Nullable Object target, @Nullable Object value)
+   + Object getField(Field field, @Nullable Object target)
+   + Method findMethod(Class<?> clazz, String name)
+   + Method findMethod(Class<?> clazz, String name, @Nullable Class<?>... paramTypes)
+   + Object invokeMethod(Method method, @Nullable Object target)
+   + Object invokeMethod(Method method, @Nullable Object target, @Nullable Object... args)
+   + Object invokeJdbcMethod(Method method, @Nullable Object target) throws SQLException
+   + Object invokeJdbcMethod(Method method, @Nullable Object target, @Nullable Object... args) throws SQLException
+   + void handleReflectionException(Exception ex)
+   + void handleInvocationTargetException(InvocationTargetException ex)
+   + void rethrowRuntimeException(Throwable ex)
+   + void rethrowException(Throwable ex) throws Exception
+   + boolean declaresException(Method method, Class<?> exceptionType)
+   + boolean isPublicStaticFinal(Field field)
+   + boolean isEqualsMethod(@Nullable Method method)
+   + boolean isHashCodeMethod(@Nullable Method method)
+   + boolean isToStringMethod(@Nullable Method method)
+   + boolean isObjectMethod(@Nullable Method method)
+   + boolean isCglibRenamedMethod(Method renamedMethod)
+   + void makeAccessible(Field field)
+   + void makeAccessible(Method method)
+   + void makeAccessible(Constructor<?> ctor)
+   + <T> Constructor<T> accessibleConstructor(Class<T> clazz, Class<?>... parameterTypes) throws NoSuchMethodException
+   + void doWithLocalMethods(Class<?> clazz, MethodCallback mc)
+   + void doWithMethods(Class<?> clazz, MethodCallback mc)
+   + void doWithMethods(Class<?> clazz, MethodCallback mc, @Nullable MethodFilter mf)
+   + Method[] getAllDeclaredMethods(Class<?> leafClass)
+   + Method[] getUniqueDeclaredMethods(Class<?> leafClass)
+   + Method[] getDeclaredMethods(Class<?> clazz)
+   + List<Method> findConcreteMethodsOnInterfaces(Class<?> clazz)
+   + void doWithLocalFields(Class<?> clazz, FieldCallback fc)
+   + void doWithFields(Class<?> clazz, FieldCallback fc)
+   + void doWithFields(Class<?> clazz, FieldCallback fc, @Nullable FieldFilter ff)
+   + Field[] getDeclaredFields(Class<?> clazz)
+   + void shallowCopyFieldState(final Object src, final Object dest)
+   + void clearCache()
+}
+
+abstract class PropertyAccessorUtils{
+   + {static}  String getPropertyName(String propertyPath)
+   + {static}  boolean isNestedOrIndexedProperty(@Nullable String propertyPath)
+   + {static}  int getFirstNestedPropertySeparatorIndex(String propertyPath)
+   + {static}  int getLastNestedPropertySeparatorIndex(String propertyPath)
+   - {static}  int getNestedPropertySeparatorIndex(String propertyPath, boolean last)
+   + {static}  boolean matchesProperty(String registeredPath, String propertyPath)
+   + {static}  String canonicalPropertyName(@Nullable String propertyName)
+   + {static}  String[] canonicalPropertyNames(@Nullable String[] propertyNames)
+}
+abstract class ClassUtils{
+   + {static,final} String ARRAY_SUFFIX
+   - {static,final} String INTERNAL_ARRAY_PREFIX
+   - {static,final} String NON_PRIMITIVE_ARRAY_PREFIX
+   - {static,final} char PACKAGE_SEPARATOR
+   - {static,final} char PATH_SEPARATOR
+   - {static,final} char INNER_CLASS_SEPARATOR
+   + {static,final} String CGLIB_CLASS_SEPARATOR
+   + {static,final} String CLASS_FILE_SUFFIX
+   - {static,final} Map<Class<?>, Class<?>> primitiveWrapperTypeMap
+   - {static,final} Map<Class<?>, Class<?>> primitiveTypeToWrapperMap
+   - {static,final} Map<String, Class<?>> primitiveTypeNameMap
+   - {static,final} Map<String, Class<?>> commonClassCache
+   - {static,final} Set<Class<?>> javaLanguageInterfaces
+   - {static,final} void registerCommonClasses(Class<?>... commonClasses)
+   + ClassLoader getDefaultClassLoader()
+   + ClassLoader overrideThreadContextClassLoader(@Nullable ClassLoader classLoaderToUse)
+   + Class<?> forName(String name, @Nullable ClassLoader classLoader) throws ClassNotFoundException, LinkageError
+   + Class<?> resolveClassName(String className, @Nullable ClassLoader classLoader) throws IllegalArgumentException
+   + boolean isPresent(String className, @Nullable ClassLoader classLoader)
+   + boolean isVisible(Class<?> clazz, @Nullable ClassLoader classLoader)
+   + boolean isCacheSafe(Class<?> clazz, @Nullable ClassLoader classLoader)
+   + boolean isLoadable(Class<?> clazz, ClassLoader classLoader)
+   + Class<?> resolvePrimitiveClassName(@Nullable String name)
+   + boolean isPrimitiveWrapper(Class<?> clazz)
+   + boolean isPrimitiveOrWrapper(Class<?> clazz)
+   + boolean isPrimitiveArray(Class<?> clazz)
+   + boolean isPrimitiveWrapperArray(Class<?> clazz)
+   + Class<?> resolvePrimitiveIfNecessary(Class<?> clazz)
+   + boolean isAssignable(Class<?> lhsType, Class<?> rhsType)
+   + boolean isAssignableValue(Class<?> type, @Nullable Object value)
+   + String convertResourcePathToClassName(String resourcePath)
+   + String convertClassNameToResourcePath(String className)
+   + String addResourcePathToPackagePath(Class<?> clazz, String resourceName)
+   + String classPackageAsResourcePath(@Nullable Class<?> clazz)
+   + String classNamesToString(Class<?>... classes)
+   + String classNamesToString(@Nullable Collection<Class<?>> classes)
+   + Class<?>[] toClassArray(Collection<Class<?>> collection)
+   + Class<?>[] getAllInterfaces(Object instance)
+   + Class<?>[] getAllInterfacesForClass(Class<?> clazz)
+   + Class<?>[] getAllInterfacesForClass(Class<?> clazz, @Nullable ClassLoader classLoader)
+   + Set<Class<?>> getAllInterfacesAsSet(Object instance)
+   + Set<Class<?>> getAllInterfacesForClassAsSet(Class<?> clazz)
+   + Set<Class<?>> getAllInterfacesForClassAsSet(Class<?> clazz, @Nullable ClassLoader classLoader
+   + Class<?> createCompositeInterface(Class<?>[] interfaces, @Nullable ClassLoader classLoader)
+   + Class<?> determineCommonAncestor(@Nullable Class<?> clazz1, @Nullable Class<?> clazz2)
+   + boolean isJavaLanguageInterface(Class<?> ifc)
+   + boolean isInnerClass(Class<?> clazz)
+   + boolean isCglibProxy(Object object)
+   + boolean isCglibProxyClass(@Nullable Class<?> clazz)
+   + boolean isCglibProxyClassName(@Nullable String className)
+   + Class<?> getUserClass(Object instance)
+   + String getDescriptiveType(@Nullable Object value)
+   + boolean matchesTypeName(Class<?> clazz, @Nullable String typeName)
+   + String getShortName(String className)
+   + String getShortName(Class<?> clazz)
+   + String getShortNameAsProperty(Class<?> clazz)
+   + String getClassFileName(Class<?> clazz)
+   + String getPackageName(Class<?> clazz)
+   + String getPackageName(String fqClassName)
+   + String getQualifiedName(Class<?> clazz)
+   + String getQualifiedMethodName(Method method)
+   + String getQualifiedMethodName(Method method, @Nullable Class<?> clazz)
+   + boolean hasConstructor(Class<?> clazz, Class<?>... paramTypes)
+   + <T> Constructor<T> getConstructorIfAvailable(Class<T> clazz, Class<?>... paramTypes)
+   + boolean hasMethod(Class<?> clazz, String methodName, Class<?>... paramTypes)
+   + Method getMethod(Class<?> clazz, String methodName, @Nullable Class<?>... paramTypes)
+   + Method getMethodIfAvailable(Class<?> clazz, String methodName, @Nullable Class<?>... paramTypes)
+   + int getMethodCountForName(Class<?> clazz, String methodName)
+   + boolean hasAtLeastOneMethodWithName(Class<?> clazz, String methodName)
+   + Method getMostSpecificMethod(Method method, @Nullable Class<?> targetClass)
+   + Method getInterfaceMethodIfPossible(Method method)
+   + boolean isUserLevelMethod(Method method)
+   + boolean isGroovyObjectMethod(Method method)
+   + boolean isOverridable(Method method, @Nullable Class<?> targetClass)
+   + Method getStaticMethod(Class<?> clazz, String methodName, Class<?>... args)
+}
+
+class ConcurrentReferenceHashMap{
+}
+
+@enduml

@@ -3,6 +3,36 @@
 class StringValueResolver{
 
 }
+class ConstructorResolver{
+    -{static,final} Object[] EMPTY_ARGS
+    -{static,final} NamedThreadLocal<InjectionPoint> currentInjectionPoint
+    -{final}  AbstractAutowireCapableBeanFactory beanFactory
+    + BeanWrapper autowireConstructor(String beanName, RootBeanDefinition mbd,@Nullable Constructor<?>[] chosenCtors, @Nullable Object[] explicitArgs)
+    - Object instantiate(String beanName, RootBeanDefinition mbd, Constructor constructorToUse, Object[] argsToUse)
+    + void resolveFactoryMethodIfPossible(RootBeanDefinition mbd)
+    - Method[] getCandidateMethods(Class<?> factoryClass, RootBeanDefinition mbd)
+    +  BeanWrapper instantiateUsingFactoryMethod(String beanName, RootBeanDefinition mbd, @Nullable Object[] explicitArgs)
+    - Object instantiate(String beanName, RootBeanDefinition mbd,@Nullable Object factoryBean, Method factoryMethod, Object[] args)
+    - int resolveConstructorArguments(String beanName, RootBeanDefinition mbd, BeanWrapper bw,ConstructorArgumentValues cargs, ConstructorArgumentValues resolvedValues)
+    - ArgumentsHolder createArgumentArray(String beanName, RootBeanDefinition mbd, @Nullable ConstructorArgumentValues resolvedValues,BeanWrapper bw, Class<?>[] paramTypes, @Nullable String[] paramNames, Executable executable,boolean autowiring, boolean fallback) throws UnsatisfiedDependencyException
+    - Object[] resolvePreparedArguments(String beanName, RootBeanDefinition mbd, BeanWrapper bw,Executable executable, Object[] argsToResolve, boolean fallback)
+      Constructor<?> getUserDeclaredConstructor(Constructor<?> constructor)
+      Object resolveAutowiredArgument(MethodParameter param, String beanName,@Nullable Set<String> autowiredBeanNames, TypeConverter typeConverter, boolean fallback)
+    + static InjectionPoint setCurrentInjectionPoint(@Nullable InjectionPoint injectionPoint)
+}
+class ArgumentsHolder{
+  + {final} Object[] rawArguments
+  + {final} Object[] arguments
+  + {final} Object[] preparedArguments
+  + boolean resolveNecessary
+  + int getTypeDifferenceWeight(Class<?>[] paramTypes)
+  + int getAssignabilityWeight(Class<?>[] paramTypes)
+  + void storeCache(RootBeanDefinition mbd, Executable constructorOrFactoryMethod)
+}
+class ConstructorPropertiesChecker{
+   +{static} String[] evaluate(Constructor<?> candidate, int paramCount)
+}
+
 class PathMatchingResourcePatternResolver{
     -{final} ResourceLoader resourceLoader
     - PathMatcher pathMatcher
@@ -71,4 +101,16 @@ PathMatchingResourcePatternResolver <..o URL
 PathMatchingResourcePatternResolver <..o JarFile
 AntPathMatcher ..|>PathMatcher
 StandardBeanExpressionResolver ..|>BeanExpressionResolver
+ConstructorResolver <..o AbstractAutowireCapableBeanFactory
+ConstructorResolver <..o RootBeanDefinition
+ConstructorResolver <..o ConstructorArgumentValues
+ConstructorResolver <..o ArgumentsHolder
+ConstructorResolver <..o BeanWrapper
+ConstructorResolver <..o InstantiationStrategy
+ConstructorResolver <..o ReflectionUtils
+ConstructorResolver <..o TypeConverter
+ConstructorResolver <..o MethodParameter
+ConstructorResolver <..o GenericTypeResolver
+ArgumentsHolder <..o ClassUtils
+ArgumentsHolder <..o MethodInvoker
 @enduml
