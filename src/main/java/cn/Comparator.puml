@@ -1,0 +1,21 @@
+@startuml
+
+class OrderComparator{
+    + {static,final} OrderComparator INSTANCE
+    + Comparator<Object> withSourceProvider(OrderSourceProvider sourceProvider)
+    + int compare(@Nullable Object o1, @Nullable Object o2)
+    - int doCompare(@Nullable Object o1, @Nullable Object o2, @Nullable OrderSourceProvider sourceProvider)
+    - int getOrder(@Nullable Object obj, @Nullable OrderSourceProvider sourceProvider)
+      int getOrder(@Nullable Object obj)
+      Integer findOrder(Object obj)
+      Integer getPriority(Object obj)
+    + {static} void sort(List<?> list)
+    + {static} void sort(Object[] array)
+    + {static} void sortIfNecessary(Object value)
+}
+interface OrderSourceProvider{
+   Object getOrderSource(Object obj)
+}
+OrderComparator ..|> Comparator
+Comparator <--o OrderSourceProvider
+@enduml

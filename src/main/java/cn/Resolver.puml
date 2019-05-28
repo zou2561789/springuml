@@ -3,6 +3,20 @@
 class StringValueResolver{
 
 }
+class GenericTypeResolver{
+    - {static,final} Map<Class<?>, Map<TypeVariable, Type>> typeVariableCache
+    + resolveParameterType(MethodParameter methodParameter, Class<?> implementationClass)
+    + Class<?> resolveReturnType(Method method, Class<?> clazz)
+    + Class<?> resolveReturnTypeArgument(Method method, Class<?> genericIfc)
+    + Class<?> resolveTypeArgument(Class<?> clazz, Class<?> genericIfc)
+    + Class<?> getSingleGeneric(ResolvableType resolvableType)
+    + Class<?>[] resolveTypeArguments(Class<?> clazz, Class<?> genericIfc)
+    + Type resolveType(Type genericType, @Nullable Class<?> contextClass)
+    - ResolvableType resolveVariable(TypeVariable<?> typeVariable, ResolvableType contextType)
+    + Class<?> resolveType(Type genericType, Map<TypeVariable, Type> map)
+    + Map<TypeVariable, Type> getTypeVariableMap(Class<?> clazz)
+    + void buildTypeVariableMap(ResolvableType type, Map<TypeVariable, Type> typeVariableMap)
+}
 class ConstructorResolver{
     -{static,final} Object[] EMPTY_ARGS
     -{static,final} NamedThreadLocal<InjectionPoint> currentInjectionPoint
@@ -94,6 +108,19 @@ interface PathMatcher{
     Comparator<String> getPatternComparator(String path)
     String combine(String pattern1, String pattern2)
 }
+class SimpleAutowireCandidateResolver{
+    boolean isAutowireCandidate(BeanDefinitionHolder bdHolder, DependencyDescriptor descriptor)
+    boolean isRequired(DependencyDescriptor descriptor)
+    Object getSuggestedValue(DependencyDescriptor descriptor)
+    Object getLazyResolutionProxyIfNecessary(DependencyDescriptor descriptor, @Nullable String beanName)
+}
+interface AutowireCandidateResolver{
+    boolean isAutowireCandidate(BeanDefinitionHolder bdHolder, DependencyDescriptor descriptor)
+    boolean isRequired(DependencyDescriptor descriptor)
+    boolean hasQualifier(DependencyDescriptor descriptor)
+    Object getSuggestedValue(DependencyDescriptor descriptor)
+    Object getLazyResolutionProxyIfNecessary(DependencyDescriptor descriptor, @Nullable String beanName)
+}
 PathMatchingResourcePatternResolver <..o ResourceLoader
 PathMatchingResourcePatternResolver <..o PathMatcher
 PathMatchingResourcePatternResolver <..o File
@@ -101,6 +128,7 @@ PathMatchingResourcePatternResolver <..o URL
 PathMatchingResourcePatternResolver <..o JarFile
 AntPathMatcher ..|>PathMatcher
 StandardBeanExpressionResolver ..|>BeanExpressionResolver
+SimpleAutowireCandidateResolver ..|>AutowireCandidateResolver
 ConstructorResolver <..o AbstractAutowireCapableBeanFactory
 ConstructorResolver <..o RootBeanDefinition
 ConstructorResolver <..o ConstructorArgumentValues

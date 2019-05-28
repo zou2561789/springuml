@@ -5,8 +5,50 @@ abstract class  BeanFactoryUtils{
 class AnnotationConfigServletWebServerApplicationContext{
 }
 class ServletWebServerApplicationContext{
+    + {static,final} String DISPATCHER_SERVLET_NAME
+    - {volatile} WebServer webServer
+    - ServletConfig servletConfig
+    - String serverNamespace
+      void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)
+    + {final}  void refresh() throws BeansException, IllegalStateException
+      void onRefresh()
+      void finishRefresh()
+      void onClose()
+    - void createWebServer()
+      ServletWebServerFactory getWebServerFactory()
+    - ServletContextInitializer getSelfInitializer()
+    - void selfInitialize(ServletContext servletContext) throws ServletException
+    - void registerApplicationScope(ServletContext servletContext)
+    - void registerWebApplicationScopes()
+      Collection<ServletContextInitializer> getServletContextInitializerBeans()
+      void prepareWebApplicationContext(ServletContext servletContext)
+    - WebServer startWebServer()
+    - void stopAndReleaseWebServer()
+      Resource getResourceByPath(String path)
+    + String getServerNamespace()
+    + void setServletConfig(ServletConfig servletConfig)
+    + WebServer getWebServer()
 }
 class GenericWebApplicationContext{
+   - ServletContext servletContext
+   - ThemeSource themeSource
+   + void setServletContext(@Nullable ServletContext servletContext)
+   + ServletContext getServletContext()
+   + String getApplicationName()
+     ConfigurableEnvironment createEnvironment()
+     void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)
+     Resource getResourceByPath(String path)
+     ResourcePatternResolver getResourcePatternResolver()
+     void onRefresh()
+     void initPropertySources()
+   + Theme getTheme(String themeName)
+   + setServletConfig(@Nullable ServletConfig servletConfig)
+   + ServletConfig getServletConfig()
+   + void setNamespace(@Nullable String namespace)
+   + String getNamespace()
+   + void setConfigLocation(String configLocation)
+   + void setConfigLocations(String... configLocations)
+   + String[] getConfigLocations()
 }
 class GenericApplicationContext{
     -{final} DefaultListableBeanFactory beanFactory
@@ -154,12 +196,66 @@ abstract class AbstractApplicationContext{
    +  String toString()
 }
 interface AnnotationConfigRegistry{
+   + {static,final} String DISPATCHER_SERVLET_NAME
+   - {volatile} WebServer webServer
+   - ServletConfig servletConfig
+   - String serverNamespace
+     void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)
+   + {final} void refresh() throws BeansException, IllegalStateException
+     void onRefresh()
+     void finishRefresh()
+     void onClose()
+   - void createWebServer()
+     ServletWebServerFactory getWebServerFactory()
+   - ServletContextInitializer getSelfInitializer()
+   - void selfInitialize(ServletContext servletContext) throws ServletException
+   - void registerApplicationScope(ServletContext servletContext)
+   - void registerWebApplicationScopes()
+     Collection<ServletContextInitializer> getServletContextInitializerBeans()
+     void prepareWebApplicationContext(ServletContext servletContext)
+   - WebServer startWebServer()
+   - void stopAndReleaseWebServer()
+   - Resource getResourceByPath(String path)
+   + String getServerNamespace()
+   + void setServerNamespace(String serverNamespace)
+   + void setServletConfig(ServletConfig servletConfig)
+   + ServletConfig getServletConfig()
+   + WebServer getWebServer()
+}
+class ExistingWebApplicationScopes{
+   - {static,final} Set<String> SCOPES
+   - {final} ConfigurableListableBeanFactory beanFactory
+   - {final} Map<String, Scope> scopes
+   + ExistingWebApplicationScopes(ConfigurableListableBeanFactory beanFactory)
+   + void restore()
 }
 interface ConfigurableWebServerApplicationContext{
+    void setServerNamespace(String serverNamespace)
 }
 interface ConfigurableWebApplicationContext{
+    String APPLICATION_CONTEXT_ID_PREFIX
+    String SERVLET_CONFIG_BEAN_NAME
+    void setServletContext(@Nullable ServletContext servletContext)
+    void setServletConfig(@Nullable ServletConfig servletConfig)
+    ServletConfig getServletConfig()
+    void setNamespace(@Nullable String namespace)
+    String getNamespace()
+    void setConfigLocation(String configLocation)
+    void setConfigLocations(String... configLocations)
+    String[] getConfigLocations()
+}
+interface WebApplicationContext{
+    String ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE
+    String SCOPE_REQUEST
+    String SCOPE_SESSION
+    String SCOPE_APPLICATION
+    String SERVLET_CONTEXT_BEAN_NAME
+    String CONTEXT_PARAMETERS_BEAN_NAME
+    String CONTEXT_ATTRIBUTES_BEAN_NAME
+    ServletContext getServletContext()
 }
 interface ThemeSource{
+    Theme getTheme(String themeName)
 }
 interface BeanDefinitionRegistry{
    void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) throws BeanDefinitionStoreException
@@ -287,6 +383,12 @@ GenericWebApplicationContext ..|>ConfigurableWebApplicationContext
 GenericWebApplicationContext ..|>ThemeSource
 GenericApplicationContext --|>AbstractApplicationContext
 GenericApplicationContext --|>BeanDefinitionRegistry
+ConfigurableWebApplicationContext --|> WebApplicationContext
+ConfigurableWebApplicationContext --|> ConfigurableApplicationContext
+WebApplicationContext --|>ApplicationContext
+ConfigurableWebServerApplicationContext --|> ConfigurableApplicationContext
+ConfigurableWebServerApplicationContext --|> WebServerApplicationContext
+WebServerApplicationContext --|>ApplicationContext
 ConfigurableApplicationContext <..o ConfigurableEnvironment
 ConfigurableApplicationContext <..o BeanFactoryPostProcessor
 ConfigurableApplicationContext <..o ApplicationListener
@@ -312,5 +414,21 @@ BeanDefinitionRegistry <--o ChildBeanDefinition
 BeanDefinitionRegistry <--o BeanDefinition
 GenericApplicationContext <--oDefaultListableBeanFactory
 GenericApplicationContext <--oResourceLoader
-
+GenericWebApplicationContext <--o ServletContext
+GenericWebApplicationContext <--o ThemeSource
+GenericWebApplicationContext <--o StandardServletEnvironment
+GenericWebApplicationContext <--o WebApplicationContextUtils
+GenericWebApplicationContext <--o ServletContextResource
+GenericWebApplicationContext <--o ServletContextResourcePatternResolver
+GenericWebApplicationContext <--o UiApplicationContextUtils
+GenericWebApplicationContext <--o ConfigurableEnvironment
+ServletWebServerApplicationContext <..o WebServer
+ServletWebServerApplicationContext <..o ServletConfig
+ServletWebServerApplicationContext <..o WebApplicationContextServletContextAwareProcessor
+ServletWebServerApplicationContext <..o ServletWebServerInitializedEvent
+ServletWebServerApplicationContext <..o ServletWebServerFactory
+ServletWebServerApplicationContext <..o WebApplicationContextUtils
+ServletWebServerApplicationContext <..o ServletContextInitializerBeans
+ServletWebServerApplicationContext <..o ClassPathContextResource
+ServletWebServerApplicationContext <..o ServletContextResource
 @enduml

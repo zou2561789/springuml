@@ -47,8 +47,13 @@ class AbstractEnvironment{
       boolean isProfileActive(String profile)
       protected void validateProfile(String profile)
       boolean suppressGetenvAccess()
-
-
+}
+class StandardServletEnvironment{
+    + {static,final} String SERVLET_CONTEXT_PROPERTY_SOURCE_NAME
+    + {static,final} String SERVLET_CONFIG_PROPERTY_SOURCE_NAME
+    + {static,final} String JNDI_PROPERTY_SOURCE_NAME
+      void customizePropertySources(MutablePropertySources propertySources)
+    + void initPropertySources(@Nullable ServletContext servletContext, @Nullable ServletConfig servletConfig)
 }
 interface ConfigurableEnvironment{
     void setActiveProfiles(String... profiles)
@@ -59,6 +64,9 @@ interface ConfigurableEnvironment{
     Map<String, Object> getSystemEnvironment()
     void merge(ConfigurableEnvironment parent)
 }
+interface ConfigurableWebEnvironment{
+    void initPropertySources(@Nullable ServletContext servletContext, @Nullable ServletConfig servletConfig)
+}
 interface Environment{
     String[] getActiveProfiles()
     String[] getDefaultProfiles()
@@ -68,6 +76,9 @@ interface Environment{
 ConfigurableEnvironment --|>ConfigurablePropertyResolver
 ConfigurableEnvironment --|>Environment
 Environment --|>PropertyResolver
+StandardServletEnvironment --|> StandardEnvironment
+StandardServletEnvironment ..|> ConfigurableWebEnvironment
+ConfigurableWebEnvironment --|> ConfigurableEnvironment
 AbstractEnvironment ..|>ConfigurableEnvironment
 AbstractEnvironment <..o PropertySourcesPropertyResolver
 @enduml

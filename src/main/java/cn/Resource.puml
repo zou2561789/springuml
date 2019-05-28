@@ -89,6 +89,23 @@ class ClassPathResource{
   + String getFilename()
     URL resolveURL()
 }
+class ServletContextResource{
+  - {final} ServletContext servletContext
+  - {final} String path
+  + {final} ServletContext getServletContext()
+  + {final} String getPath()
+  + {final} boolean exists()
+  + boolean isReadable()
+  + boolean isFile()
+  + InputStream getInputStream() throws IOException
+  + URL getURL() throws IOException
+  + File getFile() throws IOException
+  + Resource createRelative(String relativePath)
+  + String getFilename()
+  + String getDescription()
+  + boolean equals(Object other)
+  + int hashCode()
+}
 interface WritableResource{
    boolean isWritable()
    OutputStream getOutputStream() throws IOException
@@ -130,4 +147,6 @@ WritableResource --|>Resource
 ClassPathContextResource ..|>ContextResource
 ContextResource --|>Resource
 AbstractResource ..|>Resource
+ServletContextResource --|>AbstractFileResolvingResource
+ServletContextResource ..|>ContextResource
 @enduml

@@ -7,7 +7,18 @@ interface BeanPostProcessor{
 }
 interface DestructionAwareBeanPostProcessor{
      void postProcessBeforeDestruction(Object bean, String beanName) throws BeansException
-      boolean requiresDestruction(Object bean)
+     boolean requiresDestruction(Object bean)
+}
+interface SmartInstantiationAwareBeanPostProcessor{
+     Class<?> predictBeanType(Class<?> beanClass, String beanName) throws BeansException
+     Constructor<?>[] determineCandidateConstructors(Class<?> beanClass, String beanName) throws BeansException
+     Object getEarlyBeanReference(Object bean, String beanName) throws BeansException
+}
+interface InstantiationAwareBeanPostProcessor{
+    Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException
+    boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException
+    PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) throws BeansException
+    PropertyValues postProcessPropertyValues( PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName) throws BeansException
 }
 class DisposableBeanAdapter{
    - {static,final} String CLOSE_METHOD_NAME
@@ -39,5 +50,6 @@ DisposableBeanAdapter ..|>DisposableBean
 DisposableBeanAdapter ..|>Runnable
 DisposableBeanAdapter <..o BeanUtils
 DisposableBeanAdapter <..o DestructionAwareBeanPostProcessor
-
+SmartInstantiationAwareBeanPostProcessor --|>InstantiationAwareBeanPostProcessor
+InstantiationAwareBeanPostProcessor --|>BeanPostProcessor
 @enduml

@@ -137,6 +137,187 @@ abstract class ClassUtils{
 }
 
 class ConcurrentReferenceHashMap{
+   - {static,final} int DEFAULT_INITIAL_CAPACITY
+   - {static,final} float DEFAULT_LOAD_FACTOR
+   - {static,final} int DEFAULT_CONCURRENCY_LEVEL
+   - {static,final} ReferenceType DEFAULT_REFERENCE_TYPE
+   - {static,final} int MAXIMUM_CONCURRENCY_LEVE
+   - {final} Segment[] segments
+   - {final} float loadFactor
+   - {final} ReferenceType referenceType
+   - {final} int shift
+   - {volatile} Set<Map.Entry<K, V>> entrySet
+     {final} float getLoadFactor()
+     {final} int getSegmentsSize()
+     {final} Segment getSegment(int index)
+     ReferenceManager createReferenceManager()
+     int getHash(@Nullable Object o)
+   + V get(@Nullable Object key)
+   + V getOrDefault(@Nullable Object key, @Nullable V defaultValue)
+   + boolean containsKey(@Nullable Object key)
+   - Entry<K, V> getEntryIfAvailable(@Nullable Object key)
+     {final} Reference<K, V> getReference(@Nullable Object key, Restructure restructure)
+   + V put(@Nullable K key, @Nullable V value)
+   + V putIfAbsent(@Nullable K key, @Nullable V value)
+   - V put(@Nullable final K key, @Nullable final V value, final boolean overwriteExisting
+   - V remove(Object key)
+   - boolean remove(Object key, final Object value)
+   + boolean replace(K key, final V oldValue, final V newValue)
+   + V replace(K key, final V value)
+   + void clear()
+   + void purgeUnreferencedEntries()
+   + int size()
+   + boolean isEmpty()
+   + Set<Map.Entry<K, V>> entrySet()
+   - <T> T doTask(@Nullable Object key, Task<T> task)
+   - Segment getSegmentForHash(int hash)
+     {static} int calculateShift(int minimumValue, int maximumValue)
 }
-
+class Segment{
+   - {final} ReferenceManager referenceManager
+   - {final} int initialSize
+   - {volatile}  Reference<K, V>[] references
+   - {volatile} int count
+   + Reference<K, V> getReference(@Nullable Object key, int hash, Restructure restructure)
+   + <T> T doTask(final int hash, @Nullable final Object key, final Task<T> task)
+   + void clear()
+     {final} void restructureIfNecessary(boolean allowResize)
+   - Reference<K, V> findInChain(Reference<K, V> ref, @Nullable Object key, int hash)
+   - Reference<K, V>[] createReferenceArray(int size)
+   - int getIndex(int hash, Reference<K, V>[] references)
+   - {final} int getSize()
+   - {final} int getCount()
+}
+class Entry{
+    - {final} K key
+    - {final,volatile}  V value
+    + K getKey()
+    + V getValue()
+    + V setValue(@Nullable V value)
+    + String toString()
+    + {final} boolean equals(Object other)
+    + {final} int hashCode()
+}
+class Task<T>{
+  -{final} EnumSet<TaskOption> options
+  + boolean hasOption(TaskOption option)
+    T execute(@Nullable Reference<K, V> ref, @Nullable Entry<K, V> entry, @Nullable Entries entries)
+    T execute(@Nullable Reference<K, V> ref, @Nullable Entry<K, V> entry)
+}
+interface Reference{
+    Entry<K, V> get()
+    int getHash()
+    Reference<K, V> getNext()
+    void release()
+}
+class EntrySet{
+  + Iterator<Map.Entry<K, V>> iterator()
+  + boolean contains(@Nullable Object o)
+  + boolean remove(Object o)
+  + int size()
+  + void clear()
+}
+class EntryIterator{
+    - int segmentIndex
+    - int referenceIndex
+    - Reference<K, V>[] references
+    - Reference<K, V> reference
+    - Entry<K, V> next
+    - Entry<K, V> last
+    + boolean hasNext()
+    + Entry<K, V> next()
+    - void getNextIfNecessary()
+    - void moveToNextReference()
+    - void moveToNextSegment(
+    + void remove()
+}
+class ReferenceManager{
+    - {final} ReferenceQueue<Entry<K, V>> queue
+    - Reference<K, V> createReference(Entry<K, V> entry, int hash, @Nullable Reference<K, V> next)
+    + Reference<K, V> pollForPurge()
+}
+class SoftEntryReference{
+    - {final} int hash
+    - {final} Reference<K, V> nextReference
+    + int getHash()
+    + Reference<K, V> getNext()
+    + void release()
+}
+class WeakEntryReference{
+    - {final} int hash
+    - {final} Reference<K, V> nextReference
+    + int getHash()
+    + Reference<K, V> getNext()
+    + void release()
+}
+class AutowireUtils{
+    - {final} Comparator<Executable> EXECUTABLE_COMPARATOR
+    + {static} void sortConstructors(Constructor<?>[] constructors)
+    + {static} void sortFactoryMethods(Method[] factoryMethods)
+    + {static} boolean isExcludedFromDependencyCheck(PropertyDescriptor pd)
+    + {static} boolean isSetterDefinedInInterface(PropertyDescriptor pd, Set<Class<?>> interfaces)
+    + {static} Object resolveAutowiringValue(Object autowiringValue, Class<?> requiredType)
+    + {static} Class<?> resolveReturnTypeForFactoryMethod( Method method, Object[] args, @Nullable ClassLoader classLoader)
+}
+class ObjectFactoryDelegatingInvocationHandler{
+    - {final} ObjectFactory<?> objectFactory
+    + Object invoke(Object proxy, Method method, Object[] args) throws Throwable
+}
+class BeanUtils{
+    + {final} Set<Class<?>> unknownEditorTypes
+    + <T> T instantiate(Class<T> clazz) throws BeanInstantiationException
+    + <T> T instantiateClass(Class<T> clazz) throws BeanInstantiationException
+    + <T> T instantiateClass(Class<?> clazz, Class<T> assignableTo) throws BeanInstantiationException
+    + <T> T instantiateClass(Constructor<T> ctor, Object... args) throws BeanInstantiationException
+    + <T> Constructor<T> findPrimaryConstructor(Class<T> clazz)
+    + Method findMethod(Class<?> clazz, String methodName, Class<?>... paramTypes)
+    + Method findDeclaredMethod(Class<?> clazz, String methodName, Class<?>... paramTypes)
+    + Method findMethodWithMinimalParameters(Class<?> clazz, String methodName)
+    + Method findDeclaredMethodWithMinimalParameters(Class<?> clazz, String methodName) throws IllegalArgumentException
+    + Method findMethodWithMinimalParameters(Method[] methods, String methodName) throws IllegalArgumentException
+    + Method resolveSignature(String signature, Class<?> clazz)
+    + PropertyDescriptor[] getPropertyDescriptors(Class<?> clazz) throws BeansException
+    + PropertyDescriptor getPropertyDescriptor(Class<?> clazz, String propertyName) throws BeansException
+    + PropertyDescriptor findPropertyForMethod(Method method) throws BeansException
+    + PropertyDescriptor findPropertyForMethod(Method method, Class<?> clazz) throws BeansException
+    + PropertyEditor findEditorByConvention(@Nullable Class<?> targetType)
+    + Class<?> findPropertyType(String propertyName, @Nullable Class<?>... beanClasses)
+    + MethodParameter getWriteMethodParameter(PropertyDescriptor pd)
+    + boolean isSimpleProperty(Class<?> clazz)
+    + boolean isSimpleValueType(Class<?> clazz)
+    + void copyProperties(Object source, Object target) throws BeansException
+    + void copyProperties(Object source, Object target, Class<?> editable) throws BeansException
+    + void copyProperties(Object source, Object target, String... ignoreProperties) throws BeansException
+    + void copyProperties(Object source, Object target, @Nullable Class<?> editable, @Nullable String... ignoreProperties) throws BeansException
+}
+abstract class  WebApplicationContextUtils{
+    - {static,final} boolean jsfPresent
+    + WebApplicationContext getRequiredWebApplicationContext(ServletContext sc) throws IllegalStateException
+    + WebApplicationContext getWebApplicationContext(ServletContext sc)
+    + WebApplicationContext getWebApplicationContext(ServletContext sc, String attrName)
+    + WebApplicationContext findWebApplicationContext(ServletContext sc)
+    + void registerWebApplicationScopes(ConfigurableListableBeanFactory beanFactory)
+    + void registerWebApplicationScopes(ConfigurableListableBeanFactory beanFactory, @Nullable ServletContext sc)
+    + void registerEnvironmentBeans(ConfigurableListableBeanFactory bf, @Nullable ServletContext sc)
+    + registerEnvironmentBeans(ConfigurableListableBeanFactory bf,@Nullable ServletContext servletContext, @Nullable ServletConfig servletConfig)
+    + void initServletPropertySources(MutablePropertySources propertySources, ServletContext servletContext)
+    + void initServletPropertySources(MutablePropertySources sources, @Nullable ServletContext servletContext, @Nullable ServletConfig servletConfig)
+      ServletRequestAttributes currentRequestAttributes()
+}
+abstract class UiApplicationContextUtils{
+    + {static,final} String THEME_SOURCE_BEAN_NAME
+    + {static} ThemeSource initThemeSource(ApplicationContext context)
+}
+ConcurrentReferenceHashMap <..o Segment
+ConcurrentReferenceHashMap <..o ReferenceManager
+ConcurrentReferenceHashMap <..o Reference
+ConcurrentReferenceHashMap <..o Task
+Segment --|>ReentrantLock
+Segment <..o ReferenceManager
+Segment <..o Reference
+Segment <..o Task
+EntrySet <..o EntryIterator
+ReferenceManager <--o SoftEntryReference
+ReferenceManager <--o WeakEntryReference
+AutowireUtils <--o ObjectFactoryDelegatingInvocationHandler
 @enduml

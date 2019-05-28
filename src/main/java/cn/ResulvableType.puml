@@ -265,7 +265,54 @@ class AnnotatedElementAdapter{
   + int hashCode()
   + String toString()
 }
-
+class DependencyDescriptor{
+  - {final} Class<?> declaringClass
+  - String methodName
+  - Class<?>[] parameterTypes
+  - int parameterIndex
+  - String fieldName
+  - {final} boolean required
+  - {final} boolean eager
+  - int nestingLevel
+  - Class<?> containingClass
+  - {transient,volatile} ResolvableType resolvableType
+  - {transient,volatile} ResolvableType typeDescriptor
+  + boolean isRequired()
+  - boolean hasNullableAnnotation()
+  + boolean isEager()
+  + Object resolveNotUnique(ResolvableType type, Map<String, Object> matchingBeans) throws BeansException
+  + Object resolveNotUnique(Class<?> type, Map<String, Object> matchingBeans) throws BeansException
+  + Object resolveShortcut(BeanFactory beanFactory) throws BeansException
+  + Object resolveCandidate(String beanName, Class<?> requiredType, BeanFactory beanFactory) throws BeansException
+  + void increaseNestingLevel()
+  + void setContainingClass(Class<?> containingClass)
+  + ResolvableType getResolvableType()
+  + TypeDescriptor getTypeDescriptor()
+  + boolean fallbackMatchAllowed()
+  + DependencyDescriptor forFallbackMatch()
+  + void initParameterNameDiscovery(@Nullable ParameterNameDiscoverer parameterNameDiscoverer)
+  + String getDependencyName()
+  + Class<?> getDependencyType()
+  + boolean equals(Object other)
+  + int hashCode()
+  - void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException
+}
+class InjectionPoint{
+    MethodParameter methodParameter
+    Field field
+  - {volatile}   Annotation[] fieldAnnotations
+  + MethodParameter getMethodParameter()
+  + Field getField()
+    {final}   MethodParameter obtainMethodParameter()
+  + Annotation[] getAnnotations()
+  + A getAnnotation(Class<A> annotationType)
+  + Class<?> getDeclaredType()
+  + Member getMember()
+  + AnnotatedElement getAnnotatedElement()
+  + boolean equals(Object other)
+  + int hashCode()
+  + String toString()
+}
 interface AnnotatedElement;
 interface Annotation;
 interface VariableResolver
@@ -280,4 +327,5 @@ DefaultVariableResolver ..|>VariableResolver
 TypeVariablesVariableResolver ..|>VariableResolver
 DefaultVariableResolver o..>ResolvableType
 SyntheticParameterizedType ..>ParameterizedType
+DependencyDescriptor --|>InjectionPoint
 @enduml

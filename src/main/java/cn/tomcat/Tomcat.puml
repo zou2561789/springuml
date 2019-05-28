@@ -1,0 +1,94 @@
+@startuml
+note left of Tomcat
+//这是作为一个嵌入式的TOMCAT服务器
+//前置条件 TOMCAT类需要类和SERVLECT都需要在类路径中  需要一个临时的工作目录，提供了对于WEB.XML的配置
+//拥有各种ADD的配置方法
+//提供了各种位置WEB上下文方法,并且替换使用lifecycle来添加DefaultServlet
+//提供了 getDefaultWebXmlListener() 和noDefaultWebXmlPath()的WEB.xml配置
+end note
+class Tomcat{
+    - {static,final} StringManager sm
+    - {final} Map<String, Logger> pinnedLoggers//用户记录日志 防止GC收集
+    - {static,final} String[] DEFAULT_MIME_MAPPINGS
+      Server server
+      String hostname
+      String basedir
+    - {final}  Map<String, String> userPass
+    - {final}  Map<String, List<String>> userRoles
+    - {final}  Map<String, Principal> userPrincipals
+    -  boolean addDefaultWebXmlToWebapp
+    + void setBaseDir(String basedir)
+    + void setPort(int port)
+    + void setHostname(String s)
+    + Context addWebapp(String contextPath, String docBase)
+    + Context addWebapp(String contextPath, URL source) throws IOException
+    + Context addContext(String contextPath, String docBase)
+    + Wrapper addServlet(String contextPath,String servletName,String servletClass)
+    + {static} Wrapper addServlet(Context ctx,String servletName,String servletClass)
+    + Wrapper addServlet(String contextPath, String servletName,Servlet servlet)
+    + {static} Wrapper addServlet(Context ctx,String servletName,Servlet servlet)
+    + void init(ConfigurationSource source)
+    + void start() throws LifecycleException
+    + void stop() throws LifecycleException
+    + void destroy() throws LifecycleException
+    + void addUser(String user, String pass)
+    + void addRole(String user, String role)
+    //细粒度控制
+    + Connector getConnector()
+    + void setConnector(Connector connector)
+    + Service getService()
+    + void setHost(Host host)
+    + Host getHost()
+    + Engine getEngine()
+    + Server getServer()
+    + Context addContext(Host host, String contextPath, String dir)
+    + Context addContext(Host host, String contextPath, String contextName,String dir)
+    + Context addWebapp(Host host, String contextPath, String docBase)
+    + Context addWebapp(Host host, String contextPath, String docBase,LifecycleListener config)
+    + LifecycleListener getDefaultWebXmlListener()
+    + String noDefaultWebXmlPath()
+      Realm createDefaultRealm()
+      protected void initBaseDir()
+      void setSilent(boolean silent)
+    - void silence(Host host, String contextPath)
+    + void setAddDefaultWebXmlToWebapp(boolean addDefaultWebXmlToWebapp)
+    + String getLoggerName(Host host, String contextName)
+    - Context createContext(Host host, String url)
+    + void enableNaming()
+    + void initWebappDefaults(String contextPath)
+    + {static} void initWebappDefaults(Context ctx)
+      URL getWebappConfigFile(String path, String contextName)
+    - URL getWebappConfigFileFromDirectory(File docBase, String contextName)
+    - getWebappConfigFileFromWar(File docBase, String contextName)
+}
+note top of Tomcat
+//TOMACT类 各个关系
+      Catalina  <-->ConfigurationSource
+              Server parnt--child  Server/*子服务器*/
+                   Connector
+                           port
+                   Engine
+                         Realm
+                         HOST
+                             Container derive Context
+                                      Wrapper--ServletClass
+                                      LifecycleListener
+
+
+ end note
+Tomcat <--o Server
+Tomcat <--o Principal
+Tomcat <--o ExceptionUtils
+Tomcat <--o ContextName
+Tomcat <--o Container
+Tomcat <--o Wrapper
+Tomcat <--o ConfigurationSource
+Tomcat <--o Catalina
+Tomcat <--o Connector
+Tomcat <--o Host
+Tomcat <--o LifecycleListener
+Tomcat <--o FixContextListener
+Tomcat <--o Context
+Tomcat <--o SimpleRealm
+
+@enduml

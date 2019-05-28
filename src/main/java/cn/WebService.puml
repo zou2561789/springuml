@@ -1,0 +1,356 @@
+@startuml
+
+class TomcatServletWebServerFactory{
+    - {static,final} Charset DEFAULT_CHARSET
+    - {static,final} Set<Class<?>> NO_CLASSES
+    + {static,final} String DEFAULT_PROTOCOL
+    - File baseDirectory
+    - List<Valve> engineValves
+    - List<Valve> contextValves
+    - List<LifecycleListener> contextLifecycleListeners
+    - List<TomcatContextCustomizer> tomcatContextCustomizers
+    - List<TomcatConnectorCustomizer> tomcatConnectorCustomizers
+    - List<Connector> additionalTomcatConnectors
+    - ResourceLoader resourceLoader
+    - String protocol
+    - Set<String> tldSkipPatterns
+    - Charset uriEncoding
+    - int backgroundProcessorDelay
+    + WebServer getWebServer(ServletContextInitializer... initializers);
+}
+abstract class AbstractServletWebServerFactory{
+    - String contextPath
+    - String displayName
+    - Session session
+    - boolean registerDefaultServlet
+    - MimeMappings mimeMappings
+    - List<ServletContextInitializer> initializers
+    - Jsp jsp
+    - Map<Locale, Charset> localeCharsetMappings
+    - {final} DocumentRoot documentRoot
+    - {final} StaticResourceJars staticResourceJars
+    + String getContextPath()
+    + void setContextPath(String contextPath)
+    - void checkContextPath(String contextPath)
+    + String getDisplayName()
+    + void setDisplayName(String displayName)
+    + boolean isRegisterDefaultServlet()
+    + void setRegisterDefaultServlet(boolean registerDefaultServlet)
+    + MimeMappings getMimeMappings()
+    + void setMimeMappings(MimeMappings mimeMappings)
+    + File getDocumentRoot()
+    + void setDocumentRoot(File documentRoot)
+    + void setInitializers(List<? extends ServletContextInitializer> initializers)
+    + void addInitializers(ServletContextInitializer... initializers)
+    + Jsp getJsp()
+    + void setJsp(Jsp jsp)
+    + Session getSession()
+    + void setSession(Session session)
+    + Map<Locale, Charset> getLocaleCharsetMappings()
+    + void setLocaleCharsetMappings(Map<Locale, Charset> localeCharsetMappings)
+    + void setInitParameters(Map<String, String> initParameters)
+    + Map<String, String> getInitParameters()
+      {final} ServletContextInitializer[] mergeInitializers(ServletContextInitializer... initializers)
+      boolean shouldRegisterJspServlet()
+      {final} File getValidDocumentRoot()
+      {final} List<URL> getUrlsOfJarsWithMetaInfResources()
+      {final} File getValidSessionStoreDir()
+      {final} File getValidSessionStoreDir(boolean mkdirs)
+}
+class SessionConfiguringInitializer{
+
+}
+abstract class AbstractConfigurableWebServerFactory{
+  - int port
+  - InetAddress address
+  - Set<ErrorPage> errorPages
+  - Ssl ssl
+  - SslStoreProvider sslStoreProvider
+  - Http2 http2
+  - Compression compression
+  + int getPort()
+  + void setPort(int port)
+  + InetAddress getAddress(
+  + void setAddress(InetAddress address)
+  + Set<ErrorPage> getErrorPages()
+  + void setErrorPages(Set<? extends ErrorPage> errorPages)
+  + void addErrorPages(ErrorPage... errorPages)
+  + Ssl getSsl()
+  + void setSsl(Ssl ssl)
+  + SslStoreProvider getSslStoreProvider()
+  + void setSslStoreProvider(SslStoreProvider sslStoreProvider)
+  + Http2 getHttp2()
+  + void setHttp2(Http2 http2)
+  + Compression getCompression()
+  + void setCompression(Compression compression
+  + String getServerHeader()
+  + void setServerHeader(String serverHeader)
+    File createTempDir(String prefix)
+}
+interface ConfigurableTomcatWebServerFactory{
+    void setBaseDirectory(File baseDirectory)
+    void setBackgroundProcessorDelay(int delay)
+    void addEngineValves(Valve... engineValves)
+    void addConnectorCustomizers(TomcatConnectorCustomizer... tomcatConnectorCustomizers)
+    void addContextCustomizers(TomcatContextCustomizer... tomcatContextCustomizers)
+    void setUriEncoding(Charset uriEncoding)
+}
+interface ResourceLoaderAware{
+}
+interface ConfigurableServletWebServerFactory{
+     void setContextPath(String contextPath)
+     void setDisplayName(String displayName)
+     void setSession(Session session)
+     void setRegisterDefaultServlet(boolean registerDefaultServlet)
+     void setMimeMappings(MimeMappings mimeMappings)
+     void setDocumentRoot(File documentRoot)
+     void setInitializers(List<? extends ServletContextInitializer> initializers)
+     void addInitializers(ServletContextInitializer... initializers)
+     void setJsp(Jsp jsp)
+     void setLocaleCharsetMappings(Map<Locale, Charset> localeCharsetMappings)
+     void setInitParameters(Map<String, String> initParameters)
+}
+interface ConfigurableWebServerFactory{
+  void setPort(int port)
+  void setAddress(InetAddress address)
+  void setErrorPages(Set<? extends ErrorPage> errorPages)
+  void setSsl(Ssl ssl)
+  void setSslStoreProvider(SslStoreProvider sslStoreProvider)
+  void setHttp2(Http2 http2)
+  void setCompression(Compression compression)
+  void setServerHeader(String serverHeader)
+}
+interface ServletWebServerFactory{
+  WebServer getWebServer(ServletContextInitializer... initializers)
+}
+interface WebServerFactory{
+}
+interface ErrorPageRegistry{
+  void addErrorPages(ErrorPage... errorPages)
+}
+class ErrorPage{
+  - {final} HttpStatus status
+  - {final} Class<? extends Throwable> exception
+  - {final} String path
+  + String getPath()
+  + Class<? extends Throwable> getException()
+  + HttpStatus getStatus()
+  + int getStatusCode()
+  + String getExceptionName()
+  + boolean isGlobal()
+  + boolean equals(Object obj)
+  + int hashCode()
+}
+class Ssl{
+  - boolean enabled
+  - ClientAuth clientAuth
+  - String[] ciphers
+  - String[] enabledProtocols
+  - String keyAlias
+  - String keyPassword
+  - String keyStore
+  - String keyStorePassword
+  - String keyStoreType
+  - String keyStoreProvider
+  - String trustStore
+  - String trustStorePassword
+  - String trustStoreType
+  - String trustStoreProvider
+  - String protocol
+}
+interface SslStoreProvider{
+ KeyStore getKeyStore() throws Exception
+ KeyStore getTrustStore() throws Exception
+}
+class Http2{
+  - boolean enabled
+}
+class Session{
+  - Duration timeout
+  - Set<Session.SessionTrackingMode> trackingModes
+  - boolean persistent
+  - File storeDir
+  - {final}  Cookie cookie
+  - {final}  SessionStoreDirectory sessionStoreDirectory
+  + Cookie getCookie()
+  + Duration getTimeout()
+  + void setTimeout(Duration timeout)
+  + Set<Session.SessionTrackingMode> getTrackingModes()
+  + void setTrackingModes(Set<Session.SessionTrackingMode> trackingModes)
+  + boolean isPersistent()
+  + void setPersistent(boolean persistent)
+  + File getStoreDir()
+  + void setStoreDir(File storeDir)
+    SessionStoreDirectory getSessionStoreDirectory()
+}
+class Cookie{
+  - String name
+  - String domain
+  - String path
+  - String comment
+  - Boolean httpOnly
+  - Boolean secure
+}
+enum SessionTrackingMode{
+   COOKIE
+   URL
+   SSL
+}
+class SessionStoreDirectory{
+  - File directory
+  + File getDirectory()
+  + void setDirectory(File directory)
+  + File getValidDirectory(boolean mkdirs)
+  - void assertDirectory(boolean mkdirs, File dir)
+}
+class MimeMappings{
+  + {static,final}  MimeMappings DEFAULT
+  - {final} Map<String, Mapping> map
+  + Iterator<Mapping> iterator()
+  + Collection<Mapping> getAll()
+  + String add(String extension, String mimeType)
+  + String get(String extension)
+  + String remove(String extension)
+  + boolean equals(Object obj)
+  + int hashCode()
+  + {static} MimeMappings unmodifiableMappings(MimeMappings mappings
+}
+class Mapping{
+  - {final} String extension
+  - {final} String mimeType
+}
+interface ServletContextInitializer{
+    void onStartup(ServletContext servletContext) throws ServletException
+}
+class Jsp{
+  - String className
+  - Map<String, String> initParameters
+  - boolean registered
+  + String getClassName()
+  + void setClassName(String className)
+  + Map<String, String> getInitParameters()
+  + void setInitParameters(Map<String, String> initParameters)
+  + boolean getRegistered()
+  + void setRegistered(boolean registered)
+}
+class DocumentRoot{
+    - File directory
+    + File getDirectory()
+    + void setDirectory(File directory)
+    + {final} File getValidDirectory()
+    - File getWarFileDocumentRoot()
+    + File getArchiveFileDocumentRoot(String extension)
+    - File getExplodedWarFileDocumentRoot()
+    - File getCodeSourceArchive()
+      File getCodeSourceArchive(CodeSource codeSource)
+    + {final} File getExplodedWarFileDocumentRoot(File codeSourceFile)
+    - File getCommonDocumentRoot()
+    - void logNoDocumentRoots()
+}
+class StaticResourceJars{
+      List<URL> getUrls()
+      List<URL> getUrlsFrom(URL... urls)
+    - URL toUrl(String classPathEntry)
+    - File toFile(URL url)
+    - void addUrl(List<URL> urls, URL url)
+    - void addUrlFile(List<URL> urls, URL url, File file)
+    - void addUrlConnection(List<URL> urls, URL url, URLConnection connection)
+    - boolean isResourcesJar(JarURLConnection connection)
+    - boolean isResourcesJar(File file)
+    - boolean isResourcesJar(JarFile jar) throws IOException
+}
+TomcatServletWebServerFactory --|>AbstractServletWebServerFactory
+TomcatServletWebServerFactory ..|> ConfigurableTomcatWebServerFactory
+TomcatServletWebServerFactory ..|> ResourceLoaderAware
+ConfigurableTomcatWebServerFactory --|>ConfigurableWebServerFactory
+ConfigurableWebServerFactory --|>WebServerFactory
+ConfigurableWebServerFactory --|>ErrorPageRegistry
+AbstractServletWebServerFactory --|>AbstractConfigurableWebServerFactory
+AbstractServletWebServerFactory --|>ConfigurableServletWebServerFactory
+AbstractConfigurableWebServerFactory ..|>ConfigurableWebServerFactory
+AbstractConfigurableWebServerFactory <..o InetAddress
+AbstractConfigurableWebServerFactory <..o ErrorPage
+AbstractConfigurableWebServerFactory <..o Ssl
+AbstractConfigurableWebServerFactory <..o SslStoreProvider
+AbstractConfigurableWebServerFactory <..o Http2
+AbstractConfigurableWebServerFactory <..o Compression
+AbstractServletWebServerFactory <..o Session
+AbstractServletWebServerFactory <..o MimeMappings
+AbstractServletWebServerFactory <..o ServletContextInitializer
+AbstractServletWebServerFactory <..o Jsp
+AbstractServletWebServerFactory <..o DocumentRoot
+AbstractServletWebServerFactory <..o StaticResourceJars
+Session <..o Cookie
+Session <..o SessionStoreDirectory
+SessionStoreDirectory <..o ApplicationTemp
+SessionStoreDirectory <..o ApplicationHome
+TomcatServletWebServerFactory <--o Tomcat
+note top of TomcatServletWebServerFactory
+配置tomcat 步骤
+1.设置TOMCAT的基本目录
+2.配置连接器
+ 2.1配置好连接的协议
+ 2.2 定制化连接器
+   2.2.1 设置连接器端口
+   2.2.2 判断是否有服务器首部 连接地址 URL编码集
+   2.2.3 设置 绑定延时初始化  SSL 和 TomcatConnectorCustomizer
+3.设置端口非延时
+4.配置引擎
+ 4.1 设置执行的延时
+ 4.2 配置引擎的值
+5.准备好上线文
+ 5.1 验证并且获取到当然的ROOT目录
+ 5.2 创建好TomcatEmbeddedContext 并且设置资源目录
+ 5.3 设置好上下文的名字 设置好展示名
+ 5.4 设置好上下文路径
+ 5.5 设置好文档目录 和配置不需要WEB.xml的监听器 FixContextListener
+ 5.6 设置上下文的类加载器
+ 5.7 设置注册默认映射 将添加的默认映射添加到隐身中
+ 5.8 配置好 非使用用户相关重定向
+ 5.9 配置tld skip
+   5.9.1 使用 StandardJarScanFilter 来过滤
+ 5.10 配置上下文的类加载器
+ 5.11 配置好默认Servlet的设置
+   5.11.1   设置DefaultServlet 将映射到/ 并且设置启动参数 使用 org.apache.catalina.servlets.DefaultServlet类
+ 5.12 配置JSP的servlect  或者jsp的类与初始化参数 添加 *.jsp 与*.jspx的映射
+ 5.13 添加静态资源监听器
+ 5.14 合并ServletContextInitializer  //这个是AbstractServletWebServerFactory
+   5.14.1 先配置初始化的上下文参数
+   5.14.2 设置SESSION
+   5.14.3 设置好请求的初始化器 在设置好默认配置的初始化器
+ 5.15将上下文加入到端口中
+ 5.16 开始配置上下文
+   5.16.1 创建这TomcatStarter 并且添加入ServletContextInitializer
+   5.16.2 添加入 TomcatStarter 并且设置FailCtxIfServletStartFails属性
+   5.16.3 配置上创建这TomcatStarter到上下文中
+   5.16.4 配置上下文的声明周期监听器
+   5.16.5 配置好上下文的值
+   5.16.7 使用TomcatErrorPage 配置错误页
+   5.16.8 配置好最小映射 配置上下文的SESSION
+     5.16.8.1 配置SESSION超时时间
+     5.16.8.2 配置COKKILE 是否HTTPONLY
+     5.18,8.3 是否SESSION初始化 如果是配置manager 配置configurePersistSession
+       5.16.8.3.1 设置好SESSION目录
+   5.16.9 如果不存在则添加监听器 DisablePersistSessionListener
+ 5.17 后置处理上下文在所以配置都完成之后
+6.返回一个TomcatWebServer
+end note
+TomcatServletWebServerFactory <--o Tomcat
+TomcatServletWebServerFactory <--o Connector
+TomcatServletWebServerFactory <--o TomcatConnectorCustomizer
+TomcatServletWebServerFactory <--o Valve
+TomcatServletWebServerFactory <--o LoaderHidingResourceRoot
+TomcatServletWebServerFactory <--o TomcatEmbeddedContext
+TomcatServletWebServerFactory <--o StandardJarScanFilter
+TomcatServletWebServerFactory <--o DefaultServlet
+TomcatServletWebServerFactory <--o StaticResourceConfigurer
+TomcatServletWebServerFactory <--o TomcatStarter
+TomcatServletWebServerFactory <--o LifecycleListener
+TomcatServletWebServerFactory <--o FixContextListener
+TomcatServletWebServerFactory <--o TomcatErrorPage
+TomcatServletWebServerFactory <--o MimeMappings
+TomcatServletWebServerFactory <--o StandardManager
+TomcatServletWebServerFactory <--o DisablePersistSessionListener
+TomcatServletWebServerFactory <--o TomcatWebServer
+
+@enduml

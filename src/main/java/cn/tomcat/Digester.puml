@@ -1,0 +1,26 @@
+@startuml
+class  Rule{
+
+}
+note left of Rule
+//与service.xml相关的RULE配置
+SetNextRule
+SetPropertiesRule
+ObjectCreateRule
+SetAllPropertiesRule
+CertificateCreateRule
+NamingRuleSet
+EngineRuleSet
+HostRuleSet
+ContextRuleSet
+ClusterRuleSet
+SetParentClassLoaderRule
+SetNextNamingRule
+CopyParentClassLoaderRule
+LifecycleListenerRule
+CallMethodRule
+RealmRuleSet
+SetContextPropertiesRule
+CredentialHandlerRuleSet
+end note
+@enduml

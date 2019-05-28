@@ -1,0 +1,86 @@
+@startuml
+class Catalina{
+   {static,final} StringManager sm
+   {static,final} String SERVER_XML
+   boolean await//用户等待服务器是否结束
+   String configFile
+   ClassLoader parentClassLoader
+   Server server//一个服务器
+   boolean useShutdownHook
+   Thread shutdownHook
+   boolean useNaming
+   boolean loaded
+ + void setConfigFile(String file)
+ + String getConfigFile()
+ + void setUseShutdownHook(boolean useShutdownHook)
+ + boolean getUseShutdownHook()
+ + void setParentClassLoader(ClassLoader parentClassLoader)
+ + ClassLoader getParentClassLoader()
+ + void setServer(Server server)
+ + Server getServer()
+ + boolean isUseNaming()
+ + void setUseNaming(boolean useNaming)
+ + void setAwait(boolean b)
+ + boolean isAwait()
+   boolean arguments(String args[])
+   File configFile()
+   Digester createStartDigester()//主要的来配置一个Digester
+ - addClusterRuleSet(Digester digester, String prefix)
+ - Digester createStopDigester()
+ + void stopServer()
+ + void stopServer(String[] arguments)
+ + void load()
+ + void load(String args[])
+ + void start()
+ + void stop()
+ + void await()
+   void usage()
+   void initDirs()
+   void initStreams()
+   void initNaming()
+   void setSecurityProtection()
+}
+note right of Catalina
+//createStartDigester的逻辑对象图
+//配置  Object的 className属性 添加 StandardContext source属性 Connector的portOffset
+//设置使用上下文为类加载器
+   Server classname-org.apache.catalina.core.StandardServer   setServer--org.apache.catalina.Server
+        GlobalNamingResources classname-org.apache.catalina.deploy.NamingResourcesImpl  setGlobalNamingResources--org.apache.catalina.deploy.NamingResourcesImpl
+        Listener classname-null addLifecycleListener--org.apache.catalina.LifecycleListener
+        Service  classname-org.apache.catalina.core.StandardService  addService--org.apache.catalina.Service
+               Listener classname-null addLifecycleListener--org.apache.catalina.LifecycleListener
+               Executor classname-org.apache.catalina.core.StandardThreadExecutor  addExecutor--org.apache.catalina.Executor
+               Connector rule   addConnector--org.apache.catalina.connector.Connector
+                         classname-SetAllPropertiesRule,AddPortOffsetRule
+                         SSLHostConfig classname-org.apache.tomcat.util.net.SSLHostConfig  addSslHostConfig--org.apache.tomcat.util.net.SSLHostConfig
+                                      Certificate rule addCertificate--org.apache.tomcat.util.net.SSLHostConfigCertificate
+                                                  classname-CertificateCreateRule,SetAllPropertiesRule
+                                      OpenSSLConf classname-org.apache.tomcat.util.net.openssl.OpenSSLConf setOpenSslConf--org.apache.tomcat.util.net.openssl.OpenSSLConf
+                                                  OpenSSLConfCmd classname-org.apache.tomcat.util.net.openssl.OpenSSLConfCmd addcmd--org.apache.tomcat.util.net.openssl.OpenSSLConfCmd
+                         Listener classname=null  addLifecycleListener--org.apache.catalina.LifecycleListener
+                         UpgradeProtocol classname-Server/Service/Connector/UpgradeProtocol    addUpgradeProtocol--org.apache.coyote.UpgradeProtocol
+//添加 addRuleSet
+       NamingRuleSet  Server/GlobalNamingResources/
+       EngineRuleSet  Server/Service/
+       HostRuleSet  Server/Service/Engine/
+       ContextRuleSet    Server/Service/Engine/Host/
+//添加集群的RuleSet    ClusterRuleSet   Server/Service/Engine/Host/Cluster/
+       NamingRuleSet Server/Service/Engine/Host/Context/
+       Server/Service/Engine   SetParentClassLoaderRule
+//添加集群的RuleSet    ClusterRuleSet   Server/Service/Engine/Cluster/
+note left of Catalina
+//Catalina的加载
+//初始化目录  initDirs 初始化名字
+//设置资源代码 获取配置文件
+//利用 digester加载配置文件 push parse
+//这时服务器已经好了 设置setCatalina setCatalinaHome setCatalinaBase
+//重定向打印流 调用 server的INIT
+end note
+Catalina <--o StringManager
+Catalina <--o Server
+Catalina <--o Digester
+Catalina <--o ConfigFileLoader
+Catalina <--o ConfigurationSource.Resource
+Catalina <--o CatalinaShutdownHook
+Catalina <--o SetParentClassLoaderRule
+@enduml
