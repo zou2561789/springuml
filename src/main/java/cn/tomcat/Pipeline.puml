@@ -1,0 +1,41 @@
+@startuml
+
+interface Contained{
+   Container getContainer()
+   void setContainer(Container container)
+}
+interface Pipeline{
+   Valve getBasic()
+   void setBasic(Valve valve)
+   void addValve(Valve valve)
+   Valve[] getValves()
+   void removeValve(Valve valve)
+   Valve getFirst()
+   boolean isAsyncSupported()
+   void findNonAsyncValves(Set<String> result)
+}
+class StandardPipeline{
+   Valve basic
+   Container container
+   Valve first
+ + boolean isAsyncSupported()
+ + void findNonAsyncValves(Set<String> result)
+ + Container getContainer()
+ + void setContainer(Container container)
+   void initInternal()
+   {synchronized} void startInternal() throws LifecycleException
+   {synchronized} void stopInternal() throws LifecycleException
+   void destroyInternal()
+ + String toString()
+ + Valve getBasic()
+ + void setBasic(Valve valve)
+ + void addValve(Valve valve)
+ + Valve[] getValves()
+ + ObjectName[] getValveObjectNames()
+ + void removeValve(Valve valve)
+ + Valve getFirst()
+}
+Pipeline --|>Contained
+Pipeline <..o
+
+@enduml

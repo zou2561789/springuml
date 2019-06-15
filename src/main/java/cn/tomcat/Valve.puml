@@ -1,0 +1,11 @@
+@startuml
+
+interface Valve{
+   Valve getNext()
+   void setNext(Valve valve)
+   void backgroundProcess()
+   invoke(Request request, Response response) throws IOException, ServletException
+   boolean isAsyncSupported()
+}
+
+@enduml

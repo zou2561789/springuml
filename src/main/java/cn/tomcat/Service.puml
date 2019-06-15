@@ -1,0 +1,105 @@
+@startuml
+class StandardService{
+   - String name
+   - Server server
+   - {final} PropertyChangeSupport support
+     Connector connectors[]
+     {final} Object connectorsLock
+     {final} ArrayList<Executor> executors
+   - Engine engine
+   - ClassLoader parentClassLoader
+     {final} Mapper mapper
+     {final} MapperListener mapperListener
+   + Mapper getMapper()
+   + Engine getContainer()
+   + void setContainer(Engine engine)
+   + String getName()
+   + void setName(String name)
+   + Server getServer()
+   + void setServer(Server server)
+   + void addConnector(Connector connector)
+   + ObjectName[] getConnectorNames()
+   + void addPropertyChangeListener(PropertyChangeListener listener)
+   + Connector[] findConnectors()
+   + void removeConnector(Connector connector)
+   + void removePropertyChangeListener(PropertyChangeListener listener)
+   + String toString()
+   + void addExecutor(Executor ex)
+   + Executor[] findExecutors()
+   + Executor getExecutor(String executorName)
+   + void removeExecutor(Executor ex)
+     void startInternal() throws LifecycleException
+     void stopInternal() throws LifecycleException
+     void initInternal() throws LifecycleException
+     void destroyInternal() throws LifecycleException
+   + ClassLoader getParentClassLoader()
+   + void setParentClassLoader(ClassLoader parent)
+   + {final}   String getObjectNameKeyProperties()
+}
+interface Service{
+   Engine getContainer()
+   void setContainer(Engine engine)
+   String getName()
+   void setName(String name)
+   Server getServer()
+   void setServer(Server server)
+   ClassLoader getParentClassLoader()
+   void setParentClassLoader(ClassLoader parent)
+   String getDomain()
+   void addConnector(Connector connector)
+   Connector[] findConnectors()
+   void removeConnector(Connector connector)
+   void addExecutor(Executor ex)
+   Executor[] findExecutors()
+   Executor getExecutor(String name)
+   void removeExecutor(Executor ex)
+   Mapper getMapper()
+}
+StandardService ..|>Service
+StandardService <--o Server
+StandardService <..o PropertyChangeSupport
+StandardService <--o Connector
+StandardService <--o Engine
+StandardService <..o Mapper
+StandardService <..o MapperListener
+StandardService <..o Executor
+note left of Service
+Engine
+Name
+Server
+ParentClassLoader
+Connector
+Executor
+Mapper
+end note
+note top of Service
+//主要处理逻辑
+1.setContainer
+  1.1断开原始 Engine 与服务的关联
+  1.2想新设置的Engine 关联到服务
+  1.3如果服务器启动 就是在启动中或者初始化完全 者调用 Engine.start
+  1.4刷新新的MapperListener
+  1.5关闭老的Engine 通知属性改变
+2 startInternal()
+  2.1启动 Engine
+  2.2启动 Executor
+  2.3启动 MapperListener
+  2.4启动 Connector
+3 stopInternal()
+  3.1 connector停止连接器关闭SOCKET
+  3.2 停止 Engine
+  3.3 停止 连接器
+  3.4 停止 mapperListener
+  3.5 停止 执行器
+4.initInternal()
+  4.1 engine init()
+  4.2 executor  init()
+  4.3 mapperListener  init()
+  4.4 connector init()
+5.destroyInternal()
+  5.1 mapperListener   destroy()
+  5.2 connector   destroy()
+  5.3 executor destroy()
+  5.4 engine destroy()
+end note
+@enduml

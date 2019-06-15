@@ -1,0 +1,33 @@
+@startuml
+
+interface Host{
+  String ADD_ALIAS_EVENT
+  String REMOVE_ALIAS_EVENT
+  //Properties
+  String getXmlBase()
+  void setXmlBase(String xmlBase)
+  File getConfigBaseFile()
+  String getAppBase()
+  File getAppBaseFile()
+  void setAppBase(String appBase)
+  boolean getAutoDeploy()
+  void setAutoDeploy(boolean autoDeploy)
+  String getConfigClass()
+  void setConfigClass(String configClass)
+  boolean getDeployOnStartup()
+  void setDeployOnStartup(boolean deployOnStartup)
+  String getDeployIgnore()
+  Pattern getDeployIgnorePattern()
+  void setDeployIgnore(String deployIgnore)
+  ExecutorService getStartStopExecutor()
+  boolean getCreateDirs()
+  void setCreateDirs(boolean createDirs)
+  boolean getUndeployOldVersions()
+  void setUndeployOldVersions(boolean undeployOldVersions)
+  //Public Method
+  void addAlias(String alias)
+  String[] findAliases()
+  void removeAlias(String alias)
+}
+
+@enduml

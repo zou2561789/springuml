@@ -1,0 +1,56 @@
+@startuml
+
+class TomcatPaseServiceXml{
+
+}
+note top of TomcatPaseServiceXml
+Catalina
+        Server
+              GlobalNamingResources
+                                   Ejb
+                                   Environment
+                                   LocalEjb
+                                   Resource
+                                   ServiceRef
+                                   Transaction
+              Listener
+              Service
+                     Listener
+                     Executor
+                     Connector
+                              SSLHostConfig
+                                           Certificate
+                                           OpenSSLConf
+                                                      OpenSSLConfCmd
+                              Listener
+                              UpgradeProtocol
+                     Engine
+                           Cluster
+                           Listener
+                           Valve
+                           Host
+                               Cluster
+                               Listener
+                               Valve
+                               Context
+                                      Listener
+                                      Loader
+                                      Manager
+                                             Store
+                                             SessionIdGenerator
+                                      Parameter
+                                      Resources
+                                               PreResources
+                                               JarResources
+                                               PostResources
+                                      ResourceLink
+                                      Valve
+                                      WatchedResource
+                                      WrapperLifecycle
+                                      JarScanner
+                                                JarScanner
+                                      CookieProcessor
+
+
+end note
+@enduml

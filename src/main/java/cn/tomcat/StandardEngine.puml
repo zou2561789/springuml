@@ -1,0 +1,179 @@
+@startuml
+
+class StandardEngine{
+    - String defaultHost
+    - Service service
+    - String jvmRouteId
+    - {final} AtomicReference<AccessLog> defaultAccessLog
+    + Realm getRealm()
+    + String getDefaultHost()
+    + void setDefaultHost(String host)
+    + void setJvmRoute(String routeId)
+    + String getJvmRoute()
+    + Service getService()
+    + void setService(Service service)
+    + void addChild(Container child)
+    + void setParent(Container container)
+      void initInternal()
+      {synchronized} void startInternal()
+      void logAccess(Request request, Response response, long time, boolean useDefault)
+    + ClassLoader getParentClassLoader()
+    + File getCatalinaBase()
+    + File getCatalinaHome()
+      String getObjectNameKeyProperties()
+      String getDomainInternal()
+
+}
+abstract class ContainerBase{
+      {final} HashMap<String, Container> children
+      int backgroundProcessorDelay
+      ScheduledFuture<?> backgroundProcessorFuture
+      ScheduledFuture<?> monitorFuture
+      {final} List<ContainerListener> listeners
+      Log logger
+      String logName
+      Cluster cluster
+    - ReadWriteLock clusterLock
+      String name
+      Container parent
+      ClassLoader parentClassLoader
+    - {final} Pipeline pipeline
+      {volatile}   Realm realm
+    - {final} ReadWriteLock realmLock
+      boolean startChildren
+      {volatile} AccessLog accessLog
+    - {volatile} boolean accessLogScanComplete
+    - int startStopThreads
+      ExecutorService startStopExecutor
+    //Properties
+    + int getStartStopThreads()
+    + void setStartStopThreads(int startStopThreads)
+    + int getBackgroundProcessorDelay()
+    + void setBackgroundProcessorDelay(int delay)
+    + Log getLogger()
+    + String getLogName()
+    + Cluster getCluster()
+      Cluster getClusterInternal()
+    + void setCluster(Cluster cluster)
+    + String getName()
+    + void setName(String name)
+    + boolean getStartChildren()
+    + void setStartChildren(boolean startChildren)
+    + Container getParent()
+    + void setParent(Container container)
+    + ClassLoader getParentClassLoader()
+    + void setParentClassLoader(ClassLoader parent)
+    + Pipeline getPipeline()
+    + Realm getRealm()
+      Realm getRealmInternal()
+    + void setRealm(Realm realm)
+    //Container Methods
+    + void addChild(Container child)
+    - void addChildInternal(Container child)
+    + void addContainerListener(ContainerListener listener)
+    + void addPropertyChangeListener(PropertyChangeListener listener)
+    + Container findChild(String name)
+    + Container[] findChildren()
+    + ContainerListener[] findContainerListeners()
+    + void removeChild(Container child)
+    + void removeContainerListener(ContainerListener listener)
+    + void removePropertyChangeListener(PropertyChangeListener listener)
+    + void initInternal() throws LifecycleException
+    + void reconfigureStartStopExecutor(int threads)
+      {synchronized} void startInternal() throws LifecycleException
+      {synchronized} void stopInternal() throws LifecycleException
+      void destroyInternal() throws LifecycleException
+      void logAccess(Request request, Response response, long time,boolean useDefault)
+    + AccessLog getAccessLog()
+    //Pipeline Methods
+    + {synchronized}  void addValve(Valve valve)
+    + void backgroundProcess()
+    + File getCatalinaBase()
+    + File getCatalinaHome()
+    + void fireContainerEvent(String type, Object data)
+      String getDomainInternal()
+    + String getMBeanKeyProperties()
+    + ObjectName[] getChildren()
+      void threadStart()
+      void threadStop()
+      {final} String toString()
+
+}
+interface Engine{
+    + String getDefaultHost()
+    + void setDefaultHost(String defaultHost)
+    + String getJvmRoute()
+    + void setJvmRoute(String jvmRouteId)
+    + Service getService()
+    + void setService(Service service)
+}
+interface Container{
+   {static,final} String ADD_CHILD_EVENT
+   {static,final} String ADD_VALVE_EVENT
+    String REMOVE_CHILD_EVENT
+    String REMOVE_VALVE_EVENT
+    Log getLogger()
+    String getLogName()
+    ObjectName getObjectName()
+    String getDomain()
+    String getMBeanKeyProperties()
+    Pipeline getPipeline()
+    Cluster getCluster()
+    void setCluster(Cluster cluster)
+    int getBackgroundProcessorDelay()
+    void setBackgroundProcessorDelay(int delay)
+    String getName()
+    void setName(String name)
+    Container getParent()
+    void setParent(Container container)
+    ClassLoader getParentClassLoader()
+    void setParentClassLoader(ClassLoader parent)
+    Realm getRealm()
+    void setRealm(Realm realm)
+    {static} String getConfigPath(Container container, String resourceName)
+    {static} Service getService(Container container)
+    void backgroundProcess()
+    void addChild(Container child)
+    void addContainerListener(ContainerListener listener)
+    void addPropertyChangeListener(PropertyChangeListener listener)
+    Container findChild(String name)
+    Container[] findChildren()
+    ContainerListener[] findContainerListeners()
+    void removeChild(Container child)
+    void removeContainerListener(ContainerListener listener)
+    void removePropertyChangeListener(PropertyChangeListener listener)
+    void fireContainerEvent(String type, Object data)
+    void logAccess(Request request, Response response, long time,boolean useDefault)
+    AccessLog getAccessLog()
+    int getStartStopThreads()
+    void setStartStopThreads(int startStopThreads)
+    File getCatalinaBase()
+    File getCatalinaHome()
+}
+StandardEngine ..|>Engine
+StandardEngine --|>ContainerBase
+ContainerBase --|>LifecycleMBeanBase
+ContainerBase ..|>Container
+Engine --|> Container
+ContainerBase <..o Container
+ContainerBase <--o ContainerListener
+ContainerBase <--o Cluster
+ContainerBase <--o Pipeline
+ContainerBase <--o Realm
+ContainerBase <--o AccessLog
+ContainerBase <--o AccessLogAdapter
+StandardEngine <..o Service
+note left  of Container
+//从接口中看出设计
+1.由各个事件可以看出  Container 是基于事件驱动来将容器的配置或者额外时间解耦
+2.有Pipeline 看出 Container 是以一条链路执行的责任链相关模式
+3.Cluster 说明支持集群
+4.BackgroundProcessor 说明 Container 是很可能有守护线程的
+5.容器间应该存在父子关系的
+6.Realm 做了安全框架
+7.基于 StartStopThreads 说明停止关闭是异步的
+end note
+note left of Engine
+Engine 是提供了HOST 和JvmRoute  和Service
+end note
+@enduml

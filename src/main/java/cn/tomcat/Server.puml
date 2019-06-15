@@ -1,0 +1,209 @@
+@startuml
+
+class StandardServer{
+    - javax.naming.Context globalNamingContext
+    - NamingResourcesImpl globalNamingResources
+    - {final} NamingContextListener namingContextListener
+    - int port
+    - int portOffset
+    - String address
+    - Random random
+    - Service services[]
+    - {final} Object servicesLock
+    - String shutdown
+      {final} PropertyChangeSupport support
+    - {valatile} boolean stopAwait
+    - Catalina catalina
+    - ClassLoader parentClassLoader
+    - {volatile}  Thread awaitThread
+    - {volatile}  ServerSocket awaitSocket
+    - File catalinaHome
+    - File catalinaBase
+    - {final} Object namingToken
+      int utilityThreads
+      boolean utilityThreadsAsDaemon
+    - ScheduledThreadPoolExecutor utilityExecutor
+    - ScheduledExecutorService utilityExecutorWrapper
+    - ScheduledFuture<?> periodicLifecycleEventFuture
+    - ScheduledFuture<?> monitorFuture
+      int periodicEventDelay
+    // Properties
+    + Object getNamingToken()
+    + javax.naming.Context getGlobalNamingContext()
+    + void setGlobalNamingContext(javax.naming.Context globalNamingContext)
+    +  NamingResourcesImpl getGlobalNamingResources()
+    + void setGlobalNamingResources(NamingResourcesImpl globalNamingResources)
+    + String getServerInfo()
+    + String getServerBuilt()
+    + String getServerNumber()
+    + int getPort()
+    + void setPort(int port)
+    + int getPortOffset()
+    + void setPortOffset(int portOffset)
+    + int getPortWithOffset()
+    + String getAddress()
+    + void setAddress(String address)
+    + String getShutdown()
+    + void setShutdown(String shutdown)
+    + Catalina getCatalina()
+    + void setCatalina(Catalina catalina)
+    + int getUtilityThreads()
+    - {static} int getUtilityThreadsInternal(int utilityThreads)
+    + void setUtilityThreads(int utilityThreads)
+    - {synchronized} void reconfigureUtilityExecutor(int threads)
+    + boolean getUtilityThreadsAsDaemon()
+    + void setUtilityThreadsAsDaemon(boolean utilityThreadsAsDaemon)
+    + {final} int getPeriodicEventDelay()
+    + {final} void setPeriodicEventDelay(int periodicEventDelay)
+    //Server Methods
+    + void addService(Service service)
+    + void stopAwait()
+    + void await()
+    + Service findService(String name)
+    + Service[] findServices()
+    + ObjectName[] getServiceNames()
+    + void removeService(Service service)
+    + File getCatalinaBase()
+    + void setCatalinaBase(File catalinaBase)
+    + File getCatalinaHome()
+    + void setCatalinaHome(File catalinaHome)
+    //
+    + void addPropertyChangeListener(PropertyChangeListener listener)
+    + void removePropertyChangeListener(PropertyChangeListener listener)
+    + String toString()
+    + {synchronized} void storeConfig() throws InstanceNotFoundException, MBeanException
+    + {synchronized} void storeContext(Context context) throws InstanceNotFoundException, MBeanException
+    - boolean isUseNaming()
+      void startInternal() throws LifecycleException
+    - void startPeriodicLifecycleEvent()
+      void stopInternal() throws LifecycleException
+      void initInternal() throws LifecycleException
+      void destroyInternal() throws LifecycleException
+    + ClassLoader getParentClassLoader()
+    + void setParentClassLoader(ClassLoader parent)
+    - ObjectName onameStringCache
+    - ObjectName onameMBeanFactory
+      String getDomainInternal()
+      {final} String getObjectNameKeyProperties()
+    + ScheduledExecutorService getUtilityExecutor()
+}
+abstract class LifecycleMBeanBase{
+       - String domain
+       - ObjectName oname
+         MBeanServer mserver
+         void initInternal() throws LifecycleException
+         void destroyInternal() throws LifecycleException
+       + {final} void setDomain(String domain)
+       + {final} String getDomain()
+         {abstract} String getDomainInternal()
+       + {final} ObjectName getObjectName()
+         {abstract} String getObjectNameKeyProperties()
+         {final} ObjectName register(Object obj,String objectNameKeyProperties)
+         {final} void unregister(String objectNameKeyProperties)
+         {final} void unregister(ObjectName on)
+         {final} void postDeregister()
+         {final} void postRegister(Boolean registrationDone)
+         {final} void preDeregister() throws Exception
+         {final} ObjectName preRegister(MBeanServer server, ObjectName name)throws Exception
+}
+abstract class LifecycleBase{
+   -{final} List<LifecycleListener> lifecycleListeners
+   -{volatile} LifecycleState state
+   - boolean throwOnFailure
+   + void setThrowOnFailure(boolean throwOnFailure)
+   + void addLifecycleListener(LifecycleListener listener)
+   + LifecycleListener[] findLifecycleListeners()
+   + void removeLifecycleListener(LifecycleListener listener)
+     void fireLifecycleEvent(String type, Object data)
+   + {final,synchronized} void init() throws LifecycleException
+     abstract void initInternal() throws LifecycleException
+   + {final,synchronized} void start() throws LifecycleException
+     abstract void startInternal() throws LifecycleException
+   + {final,synchronized} void stop() throws LifecycleException
+     abstract void stopInternal() throws LifecycleException
+   + {final,synchronized} void destroy() throws LifecycleException
+     abstract void destroyInternal() throws LifecycleException
+   + LifecycleState getState()
+     String getStateName()
+     {synchronized} void setState(LifecycleState state) throws LifecycleException
+     {synchronized} void setState(LifecycleState state, Object data)  throws LifecycleException
+   - {synchronized} setStateInternal(LifecycleState state, Object data, boolean check)  throws LifecycleException
+   - void invalidTransition(String type) throws LifecycleException
+   - void handleSubClassException(Throwable t, String key, Object... args) throws LifecycleException
+}
+interface Server{
+     NamingResourcesImpl getGlobalNamingResources()
+     void setGlobalNamingResources(NamingResourcesImpl globalNamingResources)
+     javax.naming.Context getGlobalNamingContext()
+     int getPort()
+     void setPort(int port)
+     int getPortOffset()
+     void setPortOffset(int portOffset)
+     int getPortWithOffset()
+     String getAddress()
+     void setAddress(String address)
+     String getShutdown()
+     void setShutdown(String shutdown)
+     ClassLoader getParentClassLoader()
+     void setParentClassLoader(ClassLoader parent)
+     Catalina getCatalina()
+     void setCatalina(Catalina catalina)
+     File getCatalinaBase()
+     void setCatalinaBase(File catalinaBase)
+     File getCatalinaHome()
+     void setCatalinaHome(File catalinaHome)
+     int getUtilityThreads()
+     void setUtilityThreads(int utilityThreads)
+     void addService(Service service)
+     void await()
+     Service findService(String name)
+     Service[] findServices()
+     void removeService(Service service)
+     Object getNamingToken()
+     ScheduledExecutorService getUtilityExecutor()
+}
+interface Lifecycle{
+   String BEFORE_INIT_EVENT
+   String AFTER_INIT_EVENT
+   String START_EVENT
+   String BEFORE_START_EVENT
+   String AFTER_START_EVENT
+   String STOP_EVENT
+   String BEFORE_STOP_EVENT
+   String AFTER_STOP_EVENT
+   String AFTER_DESTROY_EVENT
+   String BEFORE_DESTROY_EVENT
+   String PERIODIC_EVENT
+   String CONFIGURE_START_EVENT
+   String CONFIGURE_STOP_EVENT
+   void addLifecycleListener(LifecycleListener listener)
+   LifecycleListener[] findLifecycleListeners()
+   void removeLifecycleListener(LifecycleListener listener)
+   void init() throws LifecycleException
+   void start() throws LifecycleException
+   void stop() throws LifecycleException
+   void destroy() throws LifecycleException
+   LifecycleState getState()
+   String getStateName()
+}
+interface JmxEnabled{
+   String getDomain()
+   void setDomain(String domain)
+   ObjectName getObjectName()
+}
+interface MBeanRegistration{
+   ObjectName preRegister(MBeanServer server, ObjectName name) throws java.lang.Exception
+   void postRegister(Boolean registrationDone)
+   void preDeregister() throws java.lang.Exception
+   void postDeregister()
+}
+StandardServer --|>LifecycleMBeanBase
+StandardServer ..|>Server
+LifecycleMBeanBase --|>LifecycleBase
+LifecycleBase ..|>Lifecycle
+LifecycleMBeanBase ..|>JmxEnabled
+JmxEnabled --|>MBeanRegistration
+Server --|>Lifecycle
+LifecycleBase <..o LifecycleListener
+
+@enduml
